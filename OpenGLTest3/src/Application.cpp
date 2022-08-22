@@ -11,7 +11,42 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
+struct ShaderProgramSource {
+	std::string VertexSource;
+	std::string FragmentSource;
+};
+
+//converts the shaders from .shader to 2 strings that can be used
+static ShaderProgramSource parseShader(const std::string& file) {
+	std::ifstream stream(file);
+	std::string line;
+	enum class ShaderType {
+		NONE=-1, VERTEX=0, FRAGMENT = 1
+	};
+	std::stringstream ss[2];
+	ShaderType type = ShaderType::NONE;
+	while (getline(stream, line)) {
+		if (line.find("#shader") != std::string::npos) {
+			if (line.find("vertex") != std::string::npos) {
+				type = ShaderType::VERTEX;
+			}
+			else if (line.find("fragment") != std::string::npos) {
+				type = ShaderType::FRAGMENT;
+			}
+		}
+		else {
+			ss[(int)type] << line << "\n";
+		}
+	}
+	return {ss[0].str(),ss[1].str()};
+	//while(std::fstream(loc).)
+	//std::cout << a << "\n";
+}
+
+
 int main() {
+	ShaderProgramSource source = parseShader("../OpenGLTest3/res/shaders/Shader.shader");
+	std::cout << source.FragmentSource;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
