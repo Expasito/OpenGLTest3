@@ -1,19 +1,6 @@
-#include "Headers.h"
 
-namespace Shaders {
-	/*struct ShaderProgramSource {
-		std::string VertexSource;
-		std::string FragmentSource;
-	};*/
-	static struct SPS {
-		std::string VertexSource;
-		std::string FragmentSource;
-	};
-	unsigned int CompileShader(unsigned int type, const std::string& source);
-	Shaders::SPS ParseShader(const std::string& filepath);
-	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
+#include "Shaders.h"
 
-}
 
 //struct Shaders::ShaderProgramSource {
 //	std::string VertexSource;
@@ -41,7 +28,7 @@ unsigned int Shaders::CompileShader(unsigned int type, const std::string& source
 	return id;
 };
 
-Shaders::SPS Shaders::ParseShader(const std::string& filepath) {
+Shaders::ShaderProgramSource Shaders::ParseShader(const std::string& filepath) {
 	std::ifstream stream(filepath);
 
 	std::string line;
