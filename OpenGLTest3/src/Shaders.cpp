@@ -2,11 +2,6 @@
 #include "Shaders.h"
 
 
-//struct Shaders::ShaderProgramSource {
-//	std::string VertexSource;
-//	std::string FragmentSource;
-//};
-//
 unsigned int Shaders::CompileShader(unsigned int type, const std::string& source) {
 	unsigned int id = glCreateShader(type);
 	const char* src = &source[0];
