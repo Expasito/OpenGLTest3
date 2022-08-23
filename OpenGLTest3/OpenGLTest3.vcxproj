@@ -159,6 +159,7 @@
     <ClCompile Include="Depend\SOIL\image_helper.c" />
     <ClCompile Include="Depend\SOIL\SOIL.c" />
     <ClCompile Include="Depend\SOIL\stb_image_aug.c" />
+    <ClCompile Include="src\Shaders.cpp" />
     <ClCompile Include="src\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -461,6 +462,7 @@
     <ClInclude Include="Depend\SOIL\stbi_DDS_aug_c.h" />
     <ClInclude Include="Depend\SOIL\stb_image_aug.h" />
     <ClInclude Include="src\Headers.h" />
+    <ClInclude Include="src\Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Depend\glm\CMakeLists.txt" />

@@ -1,6 +1,6 @@
 #include "Headers.h"
 
-#include "GLFW/glfw3.h"
+
 
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -11,72 +11,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
-struct ShaderProgramSource {
-	std::string VertexSource;
-	std::string FragmentSource;
-};
 
-static ShaderProgramSource ParseShader(const std::string& filepath) {
-	std::ifstream stream(filepath);
-
-	std::string line;
-	enum class ShaderType {
-		NONE = -1, VERTEX = 0, FRAGMENT = 1
-	};
-	std::stringstream ss[2];
-	ShaderType type = ShaderType::NONE;
-	while (getline(stream, line)) {
-		if (line.find("#shader") != std::string::npos) {
-			if (line.find("vertex") != std::string::npos) {
-				type = ShaderType::VERTEX;
-			}
-			else if (line.find("fragment") != std::string::npos) {
-				type = ShaderType::FRAGMENT;
-			}
-		}
-		else {
-			ss[(int)type] << line << "\n";
-		}
-	}
-	return { ss[0].str(), ss[1].str() };
-
-}
-
-static unsigned int CompileShader(unsigned int type, const std::string& source) {
-	unsigned int id = glCreateShader(type);
-	const char* src = &source[0];
-	glShaderSource(id, 1, &src, nullptr);
-	glCompileShader(id);
-	int result;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-	if (result == GL_FALSE) {
-		int length;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-		char* message = (char*)(alloca(length * (sizeof(char))));
-		glGetShaderInfoLog(id, length, &length, message);
-		std::cout << "Failed to compile shader\n";
-		std::cout << message << "\n";
-		glDeleteShader(id);
-		return 0;
-
-	}
-	return id;
-}
-
-static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
-	unsigned int program = glCreateProgram();
-	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-	glAttachShader(program, vs);
-	glAttachShader(program, fs);
-	glLinkProgram(program);
-	glValidateProgram(program);
-
-	glDeleteShader(vs);
-	glDeleteShader(fs);
-
-	return program;
-}
 
 int main() {
 	glfwInit();
@@ -122,8 +57,8 @@ int main() {
 	
 
 
-	ShaderProgramSource source = ParseShader("../OpenGLTest3/res/shaders/Shader.shader");
-	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+	Shaders::ShaderProgramSource source = Shaders::ParseShader("../OpenGLTest3/res/shaders/Shader.shader");
+	unsigned int shader = Shaders::CreateShader(source.VertexSource, source.FragmentSource);
 	glUseProgram(shader);
 
 	//get position data to shader
