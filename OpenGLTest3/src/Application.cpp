@@ -94,14 +94,14 @@ int main() {
 	glViewport(0, 0, 800, 600);
 
 	float verticies[] = {
-		-0.5f,-.5f, 0.0f,
-		0.5f,-.5f,0.0f,
-		0.0f,.5f,0.0f,
-		1.0f,.75f,-.25f
+		-0.5f,-.5f, 0.0f, 1.0f,0.0f,0.0f,
+		0.5f,-.5f,0.0f, 0.0f,1.0f,0.0f,
+		0.0f,.5f,0.0f, 0.0f,0.0f,1.0f,
+		1.0f,.75f,-.25f,1.0f,1.0f,1.0f
 	};
 
 	unsigned int indicies[] = {
-		0,1,3,1,2,3
+		0,1,3,2,3,1
 	};
 
 	//shader stuff begins here
@@ -119,22 +119,33 @@ int main() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 
 	
-
+	
 
 
 	ShaderProgramSource source = ParseShader("../OpenGLTest3/res/shaders/Shader.shader");
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 	glUseProgram(shader);
 
-	//actuall display data here
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//get position data to shader
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	//get color data to shader
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
 	
+	//uniforms here
+	int vertexColorLocation = glGetUniformLocation(shader, "color");
+	//glUniform4f(vertexColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+
 
 
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		//glUniform4f(vertexColorLocation, 0.0f, glfwGetTime()/2, 0.0f, 1.0f);
+
 		glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();

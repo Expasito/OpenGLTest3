@@ -15,3 +15,4 @@
 #include "../Depend/SOIL/SOIL.h"
 #include <thread>
 #include <sstream>
+#include "GLFW/glfw3.h"
