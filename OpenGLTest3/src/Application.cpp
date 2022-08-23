@@ -16,12 +16,12 @@ struct ShaderProgramSource {
 	std::string FragmentSource;
 };
 
-//converts the shaders from .shader to 2 strings that can be used
-static ShaderProgramSource parseShader(const std::string& file) {
-	std::ifstream stream(file);
+static ShaderProgramSource ParseShader(const std::string& filepath) {
+	std::ifstream stream(filepath);
+
 	std::string line;
 	enum class ShaderType {
-		NONE=-1, VERTEX=0, FRAGMENT = 1
+		NONE = -1, VERTEX = 0, FRAGMENT = 1
 	};
 	std::stringstream ss[2];
 	ShaderType type = ShaderType::NONE;
@@ -38,15 +38,47 @@ static ShaderProgramSource parseShader(const std::string& file) {
 			ss[(int)type] << line << "\n";
 		}
 	}
-	return {ss[0].str(),ss[1].str()};
-	//while(std::fstream(loc).)
-	//std::cout << a << "\n";
+	return { ss[0].str(), ss[1].str() };
+
 }
 
+static unsigned int CompileShader(unsigned int type, const std::string& source) {
+	unsigned int id = glCreateShader(type);
+	const char* src = &source[0];
+	glShaderSource(id, 1, &src, nullptr);
+	glCompileShader(id);
+	int result;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE) {
+		int length;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		char* message = (char*)(alloca(length * (sizeof(char))));
+		glGetShaderInfoLog(id, length, &length, message);
+		std::cout << "Failed to compile shader\n";
+		std::cout << message << "\n";
+		glDeleteShader(id);
+		return 0;
+
+	}
+	return id;
+}
+
+static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
+	unsigned int program = glCreateProgram();
+	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	glAttachShader(program, vs);
+	glAttachShader(program, fs);
+	glLinkProgram(program);
+	glValidateProgram(program);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	return program;
+}
 
 int main() {
-	ShaderProgramSource source = parseShader("../OpenGLTest3/res/shaders/Shader.shader");
-	std::cout << source.FragmentSource;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -63,22 +95,50 @@ int main() {
 
 	float verticies[] = {
 		-0.5f,-.5f, 0.0f,
-		5.f,-.5f,0.0f,
-		0.0f,.5f,0.0f 
+		0.5f,-.5f,0.0f,
+		0.0f,.5f,0.0f,
+		1.0f,.75f,-.25f
 	};
 
+	unsigned int indicies[] = {
+		0,1,3,1,2,3
+	};
+
+	//shader stuff begins here
 	unsigned int VBO;
+	unsigned int VAO;
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 	glGenBuffers(1, & VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
+
+	
+
+
+
+	ShaderProgramSource source = ParseShader("../OpenGLTest3/res/shaders/Shader.shader");
+	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+	glUseProgram(shader);
+
+	//actuall display data here
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	
 
 
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
+		glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
