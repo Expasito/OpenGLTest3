@@ -159,6 +159,7 @@
     <ClCompile Include="Depend\SOIL\image_helper.c" />
     <ClCompile Include="Depend\SOIL\SOIL.c" />
     <ClCompile Include="Depend\SOIL\stb_image_aug.c" />
+    <ClCompile Include="src\Shaders.cpp" />
     <ClCompile Include="src\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
