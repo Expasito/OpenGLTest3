@@ -16,4 +16,3 @@
 #include <thread>
 #include <sstream>
 #include "GLFW/glfw3.h"
-#include "Shaders.h"

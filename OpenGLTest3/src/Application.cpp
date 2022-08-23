@@ -1,5 +1,6 @@
 #include "Headers.h"
-
+#include "Shaders.h"
+#include "Render.h"
 
 
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -14,19 +15,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 
 int main() {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Opengl window", nullptr, nullptr);
-	if (!glfwInit()) {
-		exit(EXIT_FAILURE);
-	}
-	glfwMakeContextCurrent(window);
-	gladLoadGL(glfwGetProcAddress);
-	glfwSetKeyCallback(window, keyCallBack);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glViewport(0, 0, 800, 600);
+	GLFWwindow* window = Render::init();
+	Render::callBacks(window, keyCallBack, framebuffer_size_callback);
+
+	
+	
+	
 
 	float verticies[] = {
 		-0.5f,-.5f, 0.0f, 1.0f,0.0f,0.0f,
