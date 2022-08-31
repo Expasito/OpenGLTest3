@@ -612,6 +612,9 @@
     <None Include="res\shaders\Grid.shader" />
     <None Include="res\shaders\Shader.shader" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\Texture1.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
