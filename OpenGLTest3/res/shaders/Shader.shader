@@ -51,19 +51,23 @@ out vec3 outColor;
 out vec2 TexCord;
 
 //uniform mat4 transform;
-uniform mat4 translateData;
-uniform mat4 rotate;
-uniform float rotateValue;
-uniform mat4 scaleData;
+//uniform mat4 translateData;
+//uniform mat4 rotate;
+//uniform float rotateValue;
+//uniform mat4 scaleData;
+
+uniform vec3 translateData;
+uniform vec3 rotateData;
+uniform vec3 scaleData;
 
 
 void main(){
-    //mat4 trans=translate(translateData.x,translateData.y,translateData.z);
-    //mat4 rotX = RotateX(rotate.x*rotateValue);
-    //mat4 rotY = RotateY(rotate.y * rotateValue);
-    //mat4 rotZ = RotateZ(rotate.z * rotateValue);
-    //mat4 scal = scale(scaleData.x, scaleData.y, scaleData.z);
-	gl_Position = scaleData*rotate*translateData*vec4(position.x,position.y,position.z,1);
+    mat4 trans=translate(translateData.x,translateData.y,translateData.z);
+    mat4 rotX = RotateX(rotateData.x);
+    mat4 rotY = RotateY(rotateData.y);
+    mat4 rotZ = RotateZ(rotateData.z);
+    mat4 scal = scale(scaleData.x, scaleData.y, scaleData.z);
+	gl_Position = trans*rotX*rotY*rotZ*scal*vec4(position.x,position.y,position.z,1);
 	outColor = colorData;
 	TexCord = vec2(textCords.x,textCords.y*-1);
 };

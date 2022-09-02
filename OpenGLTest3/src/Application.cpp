@@ -30,13 +30,13 @@ int main() {
 	};
 	
 
-	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+	//glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
 	glm::mat4 trans = glm::mat4(1.0f);
-	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-	vec = trans * vec;
-	trans = glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+	//trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+	//vec = trans * vec;
+	//trans = glm::mat4(1.0f);
+	//trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+	//trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
 
 	unsigned int indicies[] = {
@@ -123,8 +123,8 @@ int main() {
 
 
 	unsigned int translate = glGetUniformLocation(shader, "translateData");
-	unsigned int rotate = glGetUniformLocation(shader, "rotate");
-	unsigned int rotateValue = glGetUniformLocation(shader, "rotateValue");
+	unsigned int rotate = glGetUniformLocation(shader, "rotateData");
+	//unsigned int rotateValue = glGetUniformLocation(shader, "rotateValue");
 	unsigned int scale = glGetUniformLocation(shader, "scaleData");
 	//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
@@ -153,19 +153,14 @@ int main() {
 		
 		for (int i = 0; i < items*dataPoints; i+=dataPoints) {
 			//for translating
-			trans = glm::mat4(1.0f);
-			trans = glm::translate(trans, glm::vec3(startValues[i], startValues[i+1],0));
-			glUniformMatrix4fv(translate, 1, GL_FALSE, glm::value_ptr(trans));
+			glUniform3f(translate, startValues[i], startValues[i+1],0);
 
 			//for rotate
-			trans = glm::mat4(1.0f);
-			trans = glm::rotate(trans, 2 * startValues[i + 2] * (float)glfwGetTime(), glm::vec3(1.0f, 1.0, 1.0));
-			glUniformMatrix4fv(rotate, 1, GL_FALSE,glm::value_ptr(trans));
+			glUniform3f(rotate,startValues[i+2]*(float)glfwGetTime(), startValues[i + 2]* (float)glfwGetTime(), startValues[i + 2]*(float)glfwGetTime());
 			
 			//for scaling
-			trans = glm::mat4(1.0f);
-			//trans = glm::scale(trans, glm::vec3(startValues[i+3], startValues[i+4], startValues[i+5]));
-			glUniformMatrix4fv(scale, 1,GL_FALSE,glm::value_ptr(trans));
+			glUniform3f(scale, startValues[i + 3], startValues[i + 4], startValues[i + 5]);
+
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}
 		
