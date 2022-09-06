@@ -1,6 +1,7 @@
 #include "Headers.h"
 #include "Shaders.h"
 #include "Render.h"
+#include "Object.h"
 #include <random>
 
 
@@ -14,44 +15,39 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 
+//Define static class variables to be reused
+float Object::vertices[32] =  {
+	// positions          // colors           // texture coords
+	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+};
+
+unsigned int Object::indices[6] = {
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+};
+
+float randomInRange() {
+	return (float)((float)std::rand() / (float)RAND_MAX) * 2 - 1;
+}
 
 int main() {
-
+	
+	//Create window and set key callback functions
 	GLFWwindow* window = Render::init();
 	Render::callBacks(window, keyCallBack, framebuffer_size_callback);
 
+	//Set random generator
 	std::srand(std::time(0));
 	
-	float vertices[] = {
-		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-	};
 	
-	//const int vCount = 4;
-
-	//float* vertices = new float[vCount*8];
-	//for (int i = 0; i < vCount; i++) {
-	//	vertices[i]= (float)(std::rand() % 100) / 50;
-	//}
-
-
-
-	glm::mat4 trans = glm::mat4(1.0f);
-
-
-
-	unsigned int indicies[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-
-	/*unsigned int* indicies = new unsigned int[vCount];
-	for (int i = 0; i < vCount; i++) {
-		indicies[i] = i;
-	}*/
+	//Create an array of objects to be drawn
+	Object* objs = new Object[10];
+	for (int i = 0; i < sizeof(objs); i++) {
+		objs[i] = Object();
+	}
 
 
 	//define how opengl reads texture data
@@ -90,10 +86,10 @@ int main() {
 
 	glGenBuffers(1,&VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Object::vertices), Object::vertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Object::indices), Object::indices, GL_STATIC_DRAW);
 
 	
 	
@@ -125,59 +121,42 @@ int main() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-
-	unsigned int translate = glGetUniformLocation(shader, "translateData");
-	unsigned int rotate = glGetUniformLocation(shader, "rotateData");
-	//unsigned int rotateValue = glGetUniformLocation(shader, "rotateValue");
-	unsigned int scale = glGetUniformLocation(shader, "scaleData");
-	//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-
-
 	
 
-	const int items = 100;
-	const int dataPoints = 6;
-	float* startValues = new float[items * dataPoints];
+	//Get uniform locations
+	unsigned int translateDataLoc = glGetUniformLocation(shader, "translateData");
+	unsigned int rotateDataLoc = glGetUniformLocation(shader, "rotateData");
+	unsigned int scaleDataLoc = glGetUniformLocation(shader, "scaleData");
 
-	for (int i = 0; i < items*dataPoints; i++) {
-		startValues[i]= (float)(std::rand() % 100) / 50;
-		//std::cout << startValues[i] << "\n";
-		startValues[i] -= 1;
+
+
+	//create random values for transform data
+	for (int i = 0; i < sizeof(objs); i++) {
+		objs[i].translate.x = randomInRange();
+		objs[i].translate.y = randomInRange();
+		objs[i].rotate.x = randomInRange();
+		objs[i].rotate.y = randomInRange();
+		objs[i].rotate.z = randomInRange();
+		objs[i].scale.x = randomInRange();
+		objs[i].scale.y = randomInRange();
+		objs[i].scale.z = randomInRange();
 	}
 
-	unsigned int loc = glGetUniformLocation(shader, "offsets");
-	glm::vec2 transforms[100];
-	for (int i = 0; i < 100; i++) {
-		glm::vec2 trans;
-		trans.x = std::rand() % 50 / 100;
-		trans.y= std::rand() % 50 / 100;
-		transforms[i] = trans;
-	}
-	std::cout << loc << "\n";
-
-	glUniform2fv(loc, 100, glm::value_ptr(transforms[0]));
-
-	
 
 
 	while (!glfwWindowShouldClose(window)) {
 		auto t1 =std::chrono::high_resolution_clock::now();
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		for (int i = 0; i < items*dataPoints; i+=dataPoints) {
-			//for translating
-			//glUniform3f(translate, startValues[i], startValues[i+1],0);
+		for (int i = 0; i < sizeof(objs); i++) {
+			glUniform3fv(translateDataLoc, 1, glm::value_ptr(objs[i].translate));
+			glUniform3fv(rotateDataLoc, 1, glm::value_ptr(objs[i].rotate));
+			glUniform3fv(scaleDataLoc, 1, glm::value_ptr(objs[i].scale));
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-			////for rotate
-			//glUniform3f(rotate,startValues[i+2]*(float)glfwGetTime(), startValues[i + 2]* (float)glfwGetTime(), startValues[i + 2]*(float)glfwGetTime());
-			//
-			////for scaling
-			//glUniform3f(scale, startValues[i + 3], startValues[i + 4], startValues[i + 5]);
 
-			//glDrawElements(GL_TRIANGLES, vCount, GL_UNSIGNED_INT, 0);
-			glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, 100);
 		}
+
 		
 
 		glfwSwapBuffers(window);
@@ -186,9 +165,8 @@ int main() {
 		auto ms_init = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 		//std::cout << ms_init.count() << "ms\n";
 	}
-	delete[] startValues;
-	//delete[] vertices;
-	//delete[] indicies;
+
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	//delete window;

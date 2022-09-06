@@ -226,6 +226,7 @@
     <ClCompile Include="Depend\SOIL\image_helper.c" />
     <ClCompile Include="Depend\SOIL\SOIL.c" />
     <ClCompile Include="Depend\SOIL\stb_image_aug.c" />
+    <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Shaders.cpp" />
     <ClCompile Include="src\Application.cpp" />
@@ -534,6 +535,7 @@
     <ClInclude Include="Depend\SOIL\stbi_DDS_aug.h" />
     <ClInclude Include="Depend\SOIL\stbi_DDS_aug_c.h" />
     <ClInclude Include="Depend\SOIL\stb_image_aug.h" />
+    <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Headers.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Shaders.h" />

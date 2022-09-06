@@ -50,26 +50,21 @@ mat4 RotateZ(float psi) {
 out vec3 outColor;
 out vec2 TexCord;
 
-//uniform mat4 transform;
-//uniform mat4 translateData;
-//uniform mat4 rotate;
-//uniform float rotateValue;
-//uniform mat4 scaleData;
 
-//uniform vec3 translateData;
-//uniform vec3 rotateData;
-//uniform vec3 scaleData;
 
-uniform vec2 offsets[100];
+uniform vec3 translateData;
+uniform vec3 rotateData;
+uniform vec3 scaleData;
+
+
 
 void main(){
-    //mat4 trans=translate(translateData.x,translateData.y,translateData.z);
-    //mat4 rotX = RotateX(rotateData.x);
-    //mat4 rotY = RotateY(rotateData.y);
-    //mat4 rotZ = RotateZ(rotateData.z);
-    //mat4 scal = scale(scaleData.x, scaleData.y, scaleData.z);
-    vec2 offset = offsets[gl_InstanceID];
-	gl_Position = vec4(position.xy+offset, position.z, 1);
+    mat4 trans=translate(translateData.x,translateData.y,translateData.z);
+    mat4 rotX = RotateX(rotateData.x);
+    mat4 rotY = RotateY(rotateData.y);
+    mat4 rotZ = RotateZ(rotateData.z);
+    mat4 scal = scale(scaleData.x, scaleData.y, scaleData.z);
+	gl_Position = trans*rotX*rotY*rotZ*scal*vec4(position.xyz, 1);
 	outColor = colorData;
 	TexCord = vec2(textCords.x,textCords.y*-1);
 };
@@ -85,6 +80,6 @@ uniform sampler2D Texture;
 
 void main(){
 
-	FragColor = texture(Texture, TexCord)*vec4(1,1,1,1);
+	FragColor = texture(Texture, TexCord)*vec4(1,1,1,1)*vec4(outColor,1);
 
 };
