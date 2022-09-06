@@ -20,6 +20,7 @@ int main() {
 	GLFWwindow* window = Render::init();
 	Render::callBacks(window, keyCallBack, framebuffer_size_callback);
 
+	std::srand(std::time(0));
 	
 	float vertices[] = {
 		// positions          // colors           // texture coords
@@ -29,6 +30,14 @@ int main() {
 		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 	};
 	
+	//const int vCount = 4;
+
+	//float* vertices = new float[vCount*8];
+	//for (int i = 0; i < vCount; i++) {
+	//	vertices[i]= (float)(std::rand() % 100) / 50;
+	//}
+
+
 
 	glm::mat4 trans = glm::mat4(1.0f);
 
@@ -38,6 +47,11 @@ int main() {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
+
+	/*unsigned int* indicies = new unsigned int[vCount];
+	for (int i = 0; i < vCount; i++) {
+		indicies[i] = i;
+	}*/
 
 
 	//define how opengl reads texture data
@@ -120,9 +134,9 @@ int main() {
 
 
 
-	std::srand(std::time(0));
+	
 
-	const int items = 20000;
+	const int items = 100;
 	const int dataPoints = 6;
 	float* startValues = new float[items * dataPoints];
 
@@ -131,27 +145,38 @@ int main() {
 		//std::cout << startValues[i] << "\n";
 		startValues[i] -= 1;
 	}
+
+	unsigned int loc = glGetUniformLocation(shader, "offsets");
+	glm::vec2 transforms[100];
+	for (int i = 0; i < 100; i++) {
+		glm::vec2 trans;
+		trans.x = std::rand() % 50 / 100;
+		trans.y= std::rand() % 50 / 100;
+		transforms[i] = trans;
+	}
+	std::cout << loc << "\n";
+
+	glUniform2fv(loc, 100, glm::value_ptr(transforms[0]));
+
 	
 
 
 	while (!glfwWindowShouldClose(window)) {
 		auto t1 =std::chrono::high_resolution_clock::now();
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		//glUniform4f(vertexColorLocation, 0.0f, glfwGetTime()/2, 0.0f, 1.0f);
-
 		
 		for (int i = 0; i < items*dataPoints; i+=dataPoints) {
 			//for translating
-			glUniform3f(translate, startValues[i], startValues[i+1],0);
+			//glUniform3f(translate, startValues[i], startValues[i+1],0);
 
-			//for rotate
-			glUniform3f(rotate,startValues[i+2]*(float)glfwGetTime(), startValues[i + 2]* (float)glfwGetTime(), startValues[i + 2]*(float)glfwGetTime());
-			
-			//for scaling
-			glUniform3f(scale, startValues[i + 3], startValues[i + 4], startValues[i + 5]);
+			////for rotate
+			//glUniform3f(rotate,startValues[i+2]*(float)glfwGetTime(), startValues[i + 2]* (float)glfwGetTime(), startValues[i + 2]*(float)glfwGetTime());
+			//
+			////for scaling
+			//glUniform3f(scale, startValues[i + 3], startValues[i + 4], startValues[i + 5]);
 
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			//glDrawElements(GL_TRIANGLES, vCount, GL_UNSIGNED_INT, 0);
+			glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, 100);
 		}
 		
 
@@ -159,9 +184,11 @@ int main() {
 		glfwPollEvents();
 		auto t2 = std::chrono::high_resolution_clock::now();
 		auto ms_init = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-		std::cout << ms_init.count() << "ms\n";
+		//std::cout << ms_init.count() << "ms\n";
 	}
-	delete startValues;
+	delete[] startValues;
+	delete[] vertices;
+	delete[] indicies;
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	//delete window;
