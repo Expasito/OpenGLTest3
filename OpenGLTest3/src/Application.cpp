@@ -122,7 +122,7 @@ int main() {
 
 	std::srand(std::time(0));
 
-	const int items = 2000;
+	const int items = 20000;
 	const int dataPoints = 6;
 	float* startValues = new float[items * dataPoints];
 
@@ -135,7 +135,7 @@ int main() {
 
 
 	while (!glfwWindowShouldClose(window)) {
-		std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+		auto t1 =std::chrono::high_resolution_clock::now();
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//glUniform4f(vertexColorLocation, 0.0f, glfwGetTime()/2, 0.0f, 1.0f);
@@ -157,8 +157,9 @@ int main() {
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
-		std::cout << (end - start).count() << "\n";
+		auto t2 = std::chrono::high_resolution_clock::now();
+		auto ms_init = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+		std::cout << ms_init.count() << "ms\n";
 	}
 	delete startValues;
 	glfwDestroyWindow(window);
