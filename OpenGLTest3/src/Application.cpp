@@ -187,8 +187,8 @@ int main() {
 		//std::cout << ms_init.count() << "ms\n";
 	}
 	delete[] startValues;
-	delete[] vertices;
-	delete[] indicies;
+	//delete[] vertices;
+	//delete[] indicies;
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	//delete window;
