@@ -111,7 +111,7 @@ int main() {
 	
 	
 	//Create an array of objects to be drawn
-	const int objsCount = 1;
+	const int objsCount = 100;
 	Object* objs = new Object[objsCount];
 	for (int i = 0; i < objsCount; i++) {
 		objs[i] = Object();
@@ -137,7 +137,7 @@ int main() {
 
 	//view matrix
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -10.0f));
 
 	//projection matrix
 	glm::mat4 projection;
@@ -213,17 +213,18 @@ int main() {
 	
 
 
-	////create random values for transform data
-	//for (int i = 0; i < objsCount; i++) {
-	//	objs[i].translate.x = randomInRange();
-	//	objs[i].translate.y = randomInRange();
-	//	objs[i].rotate.x = randomInRange();
-	//	objs[i].rotate.y = randomInRange();
-	//	objs[i].rotate.z = randomInRange();
-	//	objs[i].scale.x = randomInRange();
-	//	objs[i].scale.y = randomInRange();
-	//	objs[i].scale.z = randomInRange();
-	//}
+	//create random values for transform data
+	for (int i = 0; i < objsCount; i++) {
+		objs[i].translate.x = randomInRange()*4;
+		objs[i].translate.y = randomInRange() * 4;
+		objs[i].translate.z = randomInRange() * 4;
+		objs[i].rotate.x = randomInRange() * 4;
+		objs[i].rotate.y = randomInRange() * 4;
+		objs[i].rotate.z = randomInRange() * 4;
+		objs[i].scale.x = randomInRange() * 4;
+		objs[i].scale.y = randomInRange() * 4;
+		objs[i].scale.z = randomInRange() * 4;
+	}
 
 	float timer = 0;
 	
