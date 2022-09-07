@@ -25,5 +25,6 @@ void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyfun, GLFWframebuffersizef
 	gladLoadGL(glfwGetProcAddress);
 	glfwSetKeyCallback(wind, keyfun);
 	glfwSetFramebufferSizeCallback(wind, buffersizefun);
+	glfwSwapInterval(0);
 	glViewport(0, 0, 800, 600);
 }

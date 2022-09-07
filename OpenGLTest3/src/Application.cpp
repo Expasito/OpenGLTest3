@@ -4,6 +4,8 @@
 #include "Object.h"
 #include <random>
 
+#define clearMemory delete[] objs; glfwDestroyWindow(window); glfwTerminate();
+
 
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -16,7 +18,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 
 //Define static class variables to be reused
-float Object::vertices[32] =  {
+float Object::vertices[] =  {
 	// positions          // colors           // texture coords
 	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
 	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
@@ -24,7 +26,7 @@ float Object::vertices[32] =  {
 	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 };
 
-unsigned int Object::indices[6] = {
+unsigned int Object::indices[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 };
@@ -32,6 +34,8 @@ unsigned int Object::indices[6] = {
 float randomInRange() {
 	return (float)((float)std::rand() / (float)RAND_MAX) * 2 - 1;
 }
+
+
 
 int main() {
 	
@@ -44,43 +48,26 @@ int main() {
 	
 	
 	//Create an array of objects to be drawn
-	Object* objs = new Object[10];
-	for (int i = 0; i < sizeof(objs); i++) {
+	const int objsCount = 100;
+	Object* objs = new Object[objsCount];
+	for (int i = 0; i < objsCount; i++) {
 		objs[i] = Object();
 	}
 
 
-	//define how opengl reads texture data
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//Mipmaps
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+	//define how the shaders read texture inputs
+	Shaders::defineTextureInputs();
 
 
 	//load textures begins here
-	//stbi_set_flip_vertically_on_load(true);
-	int width, height, nrChannels;
-	unsigned char* data = SOIL_load_image("../OpenGLTest3/res/textures/Texture1.png", &width, &height, &nrChannels, 0);
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	stbi_image_free(data);
-
-	//load texture ends here
-
-
+	unsigned int texture = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
+	unsigned int texture2 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture2.png");
 
 
 	//shader stuff begins here
-	unsigned int VBO;
-	unsigned int VAO;
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
+	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -88,6 +75,7 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Object::vertices), Object::vertices, GL_STATIC_DRAW);
 
+	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Object::indices), Object::indices, GL_STATIC_DRAW);
 
@@ -96,7 +84,14 @@ int main() {
 
 
 	Shaders::ShaderProgramSource source = Shaders::ParseShader("../OpenGLTest3/res/shaders/Shader.shader");
-	unsigned int shader = Shaders::CreateShader(source.VertexSource, source.FragmentSource);
+	Shaders::CompileShaderStatus shaderRet = Shaders::CreateShader(source.VertexSource, source.FragmentSource);
+	//Exit program if shader error
+	if (shaderRet.error) {
+		clearMemory
+		exit(1);
+	}
+	
+	unsigned int shader = shaderRet.id;
 	glUseProgram(shader);
 
 	//get position data to shader
@@ -111,17 +106,11 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	
-	
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glBindVertexArray(VAO);
+
+	//define which texture to use
+	glBindTexture(GL_TEXTURE_2D, texture2);
 
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	
 
 	//Get uniform locations
 	unsigned int translateDataLoc = glGetUniformLocation(shader, "translateData");
@@ -131,7 +120,7 @@ int main() {
 
 
 	//create random values for transform data
-	for (int i = 0; i < sizeof(objs); i++) {
+	for (int i = 0; i < objsCount; i++) {
 		objs[i].translate.x = randomInRange();
 		objs[i].translate.y = randomInRange();
 		objs[i].rotate.x = randomInRange();
@@ -142,33 +131,29 @@ int main() {
 		objs[i].scale.z = randomInRange();
 	}
 
-
-
+	
+	
+	//main run loop
 	while (!glfwWindowShouldClose(window)) {
 		auto t1 =std::chrono::high_resolution_clock::now();
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		for (int i = 0; i < sizeof(objs); i++) {
+		for (int i = 0; i < objsCount; i++) {
 			glUniform3fv(translateDataLoc, 1, glm::value_ptr(objs[i].translate));
 			glUniform3fv(rotateDataLoc, 1, glm::value_ptr(objs[i].rotate));
 			glUniform3fv(scaleDataLoc, 1, glm::value_ptr(objs[i].scale));
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-
 		}
 
-		
-
 		glfwSwapBuffers(window);
+		
 		glfwPollEvents();
 		auto t2 = std::chrono::high_resolution_clock::now();
 		auto ms_init = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-		//std::cout << ms_init.count() << "ms\n";
+		std::cout << ms_init.count() << "ms\n";
 	}
 
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-	//delete window;
+	//Macro for making program memory safe
+	clearMemory
 
 }

@@ -7,9 +7,16 @@ namespace Shaders {
 		std::string VertexSource;
 		std::string FragmentSource;
 	};
+	struct CompileShaderStatus {
+		unsigned int id;
+		bool error;
+	};
 
-	unsigned int CompileShader(unsigned int type, const std::string& source);
+	CompileShaderStatus CompileShader(unsigned int type, const std::string& source);
 	ShaderProgramSource ParseShader(const std::string& filepath);
-	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
+	CompileShaderStatus CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
 
+
+	unsigned int loadTexture(const char * filename);
+	void defineTextureInputs();
 }
