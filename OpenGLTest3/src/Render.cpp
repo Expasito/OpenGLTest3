@@ -26,5 +26,8 @@ void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyfun, GLFWframebuffersizef
 	glfwSetKeyCallback(wind, keyfun);
 	glfwSetFramebufferSizeCallback(wind, buffersizefun);
 	glfwSwapInterval(0);
+	glEnable(GL_DEPTH_TEST);
+
+
 	glViewport(0, 0, 800, 600);
 }

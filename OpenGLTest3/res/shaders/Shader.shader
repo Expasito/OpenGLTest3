@@ -2,7 +2,7 @@
 #version 330 core
 
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 colorData;
+//layout(location = 1) in vec3 colorData;
 layout(location = 2) in vec2 textCords;
 
 mat4 scale(float x, float y, float z) {
@@ -56,6 +56,9 @@ uniform vec3 translateData;
 uniform vec3 rotateData;
 uniform vec3 scaleData;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 
 void main(){
@@ -64,9 +67,12 @@ void main(){
     mat4 rotY = RotateY(rotateData.y);
     mat4 rotZ = RotateZ(rotateData.z);
     mat4 scal = scale(scaleData.x, scaleData.y, scaleData.z);
-	gl_Position = trans*rotX*rotY*rotZ*scal*vec4(position.xyz, 1);
+    vec4 localPos = trans * rotX * rotY * rotZ * scal * vec4(position.xyz, 1);
+    gl_Position = projection * view * model * localPos;
+
+    vec3 colorData = vec3(1, 1, 1);
 	outColor = colorData;
-	TexCord = vec2(textCords.x,textCords.y*-1);
+	TexCord = vec2(textCords.x,textCords.y*1);
 };
 
 

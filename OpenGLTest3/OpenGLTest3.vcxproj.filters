@@ -1406,6 +1406,9 @@
     <Image Include="res\textures\Texture2.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\Deor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Depend\lib-vc2022\glew32.lib" />
