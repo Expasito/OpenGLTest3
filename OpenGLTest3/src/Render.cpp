@@ -19,12 +19,14 @@ GLFWwindow* Render::init() {
 	return wind;
 }
 
-void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyfun, GLFWframebuffersizefun buffersizefun) {
+void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyCallBack, GLFWframebuffersizefun buffersizefun, GLFWmousebuttonfun mouseButtonCallback, GLFWscrollfun scrollCallBack) {
 	//other functions needed
 	glfwMakeContextCurrent(wind);
 	gladLoadGL(glfwGetProcAddress);
-	glfwSetKeyCallback(wind, keyfun);
+	glfwSetKeyCallback(wind, keyCallBack);
 	glfwSetFramebufferSizeCallback(wind, buffersizefun);
+	glfwSetMouseButtonCallback(wind, mouseButtonCallback);
+	glfwSetScrollCallback(wind, scrollCallBack);
 	glfwSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 

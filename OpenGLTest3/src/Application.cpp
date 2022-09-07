@@ -7,9 +7,28 @@
 #define clearMemory delete[] objs; glfwDestroyWindow(window); glfwTerminate();
 
 
+static bool mousePressed=false;
+static float fov = 45;
+
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+}
+
+void mouseButtonCallBack(GLFWwindow* window, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+		if (mousePressed) {
+			mousePressed = false;
+		}
+		else if (!mousePressed) {
+			mousePressed = true;
+		}
+	}
+}
+
+void scrollCallBack(GLFWwindow* window, double xoffset, double yoffset) {
+	fov -= yoffset;
+
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -85,7 +104,7 @@ int main() {
 	
 	//Create window and set key callback functions
 	GLFWwindow* window = Render::init();
-	Render::callBacks(window, keyCallBack, framebuffer_size_callback);
+	Render::callBacks(window, keyCallBack, framebuffer_size_callback, mouseButtonCallBack,scrollCallBack);
 
 	//Set random generator
 	std::srand(std::time(0));
@@ -112,14 +131,14 @@ int main() {
 
 	//projection matrix
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(20.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
 
 	//define how the shaders read texture inputs
 	Shaders::defineTextureInputs();
 
 
 	//load textures begins here
-	unsigned int texture = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
+	unsigned int texture1 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
 	unsigned int texture2 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture2.png");
 	unsigned int texture3 = Shaders::loadTexture("../OpenGLTest3/res/textures/Deor.png");
 
@@ -167,7 +186,7 @@ int main() {
 
 	//define which texture to use
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture3);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 
 
 
@@ -196,16 +215,21 @@ int main() {
 	//	objs[i].scale.z = randomInRange();
 	//}
 
-	
+	float timer = 0;
 	
 	//main run loop
 	while (!glfwWindowShouldClose(window)) {
 		auto t1 =std::chrono::high_resolution_clock::now();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		model = glm::mat4(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
+		if (!mousePressed) {
+			timer += .001;
+			model = glm::mat4(1.0f);
+			model = glm::rotate(model, (float)timer * glm::radians(5.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+
+		}
+		projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
 		//Send camera data to shader
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));

@@ -2,7 +2,6 @@
 #version 330 core
 
 layout(location = 0) in vec3 position;
-//layout(location = 1) in vec3 colorData;
 layout(location = 2) in vec2 textCords;
 
 mat4 scale(float x, float y, float z) {
@@ -47,7 +46,6 @@ mat4 RotateZ(float psi) {
         vec4(0., 0., 0., 1.));
 }
 
-out vec3 outColor;
 out vec2 TexCord;
 
 
@@ -60,18 +58,18 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+out vec3 COL;
 
 void main(){
-    mat4 trans=translate(translateData.x,translateData.y,translateData.z);
-    mat4 rotX = RotateX(rotateData.x);
-    mat4 rotY = RotateY(rotateData.y);
-    mat4 rotZ = RotateZ(rotateData.z);
-    mat4 scal = scale(scaleData.x, scaleData.y, scaleData.z);
-    vec4 localPos = trans * rotX * rotY * rotZ * scal * vec4(position.xyz, 1);
+    //mat4 trans=translate(translateData.x,translateData.y,translateData.z);
+    //mat4 rotX = RotateX(rotateData.x);
+    //mat4 rotY = RotateY(rotateData.y);
+    //mat4 rotZ = RotateZ(rotateData.z);
+    //mat4 scal = scale(scaleData.x, scaleData.y, scaleData.z);
+    //vec4 localPos = trans * rotX * rotY * rotZ * scal * vec4(position.xyz, 1);
+    vec4 localPos = vec4(position.xyz, 1);
     gl_Position = projection * view * model * localPos;
-
-    vec3 colorData = vec3(1, 1, 1);
-	outColor = colorData;
+    COL = position.xyz;
 	TexCord = vec2(textCords.x,textCords.y*1);
 };
 
@@ -80,12 +78,13 @@ void main(){
 #version 330 core 
 
 out vec4 FragColor;
-in vec3 outColor;
 in vec2 TexCord;
+in vec3 col;
 uniform sampler2D Texture;
 
 void main(){
 
-	FragColor = texture(Texture, TexCord)*vec4(1,1,1,1)*vec4(outColor,1);
+    FragColor = texture(Texture, TexCord);
+    //FragColor = vec4(TexCord.xy,1, 1);
 
 };
