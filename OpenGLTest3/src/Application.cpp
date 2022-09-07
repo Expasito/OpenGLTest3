@@ -48,7 +48,7 @@ int main() {
 	
 	
 	//Create an array of objects to be drawn
-	const int objsCount = 100;
+	const int objsCount = 10000;
 	Object* objs = new Object[objsCount];
 	for (int i = 0; i < objsCount; i++) {
 		objs[i] = Object();
@@ -140,7 +140,7 @@ int main() {
 		
 		for (int i = 0; i < objsCount; i++) {
 			glUniform3fv(translateDataLoc, 1, glm::value_ptr(objs[i].translate));
-			glUniform3fv(rotateDataLoc, 1, glm::value_ptr(objs[i].rotate));
+			glUniform3fv(rotateDataLoc, 1, glm::value_ptr(objs[i].rotate*(float)glfwGetTime()));
 			glUniform3fv(scaleDataLoc, 1, glm::value_ptr(objs[i].scale));
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}
