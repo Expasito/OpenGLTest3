@@ -2,7 +2,7 @@
 #include "Shaders.h"
 
 
-unsigned int Shaders::CompileShader(unsigned int type, const std::string& source) {
+Shaders::CompileShaderStatus Shaders::CompileShader(unsigned int type, const std::string& source) {
 	unsigned int id = glCreateShader(type);
 	const char* src = &source[0];
 	glShaderSource(id, 1, &src, nullptr);
@@ -17,10 +17,10 @@ unsigned int Shaders::CompileShader(unsigned int type, const std::string& source
 		std::cout << "Failed to compile shader\n";
 		std::cout << message << "\n";
 		glDeleteShader(id);
-		return 0;
+		return { 0,1 };
 
 	}
-	return id;
+	return { id, 0 };
 };
 
 Shaders::ShaderProgramSource Shaders::ParseShader(const std::string& filepath) {
@@ -49,17 +49,45 @@ Shaders::ShaderProgramSource Shaders::ParseShader(const std::string& filepath) {
 
 };
 
-unsigned int Shaders::CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
+Shaders::CompileShaderStatus Shaders::CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
 	unsigned int program = glCreateProgram();
-	unsigned int vs = Shaders::CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = Shaders::CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-	glAttachShader(program, vs);
-	glAttachShader(program, fs);
+	Shaders::CompileShaderStatus vs = Shaders::CompileShader(GL_VERTEX_SHADER, vertexShader);
+	Shaders::CompileShaderStatus fs = Shaders::CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	if (vs.error || fs.error) {
+		return { 0,1 };
+	}
+	glAttachShader(program, vs.id);
+	glAttachShader(program, fs.id);
 	glLinkProgram(program);
 	glValidateProgram(program);
 
-	glDeleteShader(vs);
-	glDeleteShader(fs);
+	glDeleteShader(vs.id);
+	glDeleteShader(fs.id);
 
-	return program;
+	return { program, 0 };
+}
+
+
+unsigned int Shaders::loadTexture(const char* filename) {
+	int width, height, nrChannels;
+	unsigned int texture;
+	unsigned char* data = SOIL_load_image(filename, &width, &height, &nrChannels, 0);
+	
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(data);
+	return texture;
+}
+
+void Shaders::defineTextureInputs() {
+	//define how opengl reads texture data
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//Mipmaps
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }

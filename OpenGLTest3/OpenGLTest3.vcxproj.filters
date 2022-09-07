@@ -18,15 +18,6 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Depend\glad\gl.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Depend\glad\linmath_test.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Depend\glad\vulkan.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Depend\glm\detail\glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,24 +39,21 @@
     <ClCompile Include="src\Render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Depend\glad\gl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Depend\glad\linmath_test.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Depend\glad\vulkan.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Headers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Depend\glad\vulkan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Depend\glad\gl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Depend\glad\linmath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Depend\glad\linmath_test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Depend\glad\vk_platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Depend\glm\vector_relational.hpp">
@@ -944,13 +932,46 @@
     <ClInclude Include="Depend\SOIL\stbi_DDS_aug_c.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Depend\glad\KHR\khrplatform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\include\GL\eglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\include\GL\glew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\include\GL\glxew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\include\GL\wglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\include\GLFW\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\glad\KHR\khrplatform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\glad\gl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\glad\linmath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\glad\linmath_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\glad\vk_platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Depend\glad\vulkan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1375,7 +1396,20 @@
     <None Include="Depend\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="res\shaders\Grid.shader" />
     <None Include="res\shaders\Shader.shader" />
+    <None Include="Depend\glm\CMakeSettings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\Texture1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Texture2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Depend\lib-vc2022\glew32.lib" />
+    <Library Include="Depend\lib-vc2022\glfw3.lib" />
+    <Library Include="Depend\lib-vc2022\glew32s.lib" />
   </ItemGroup>
 </Project>
