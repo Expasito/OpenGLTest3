@@ -118,8 +118,18 @@ int main() {
 	}
 
 
-
-
+	const float textureDx = .01;
+	//modify texture cords by moving +- .01
+	for (int i = 3; i < 36*5; i += 5) {
+		if (Object::vertices[i] == 1.0f)
+			Object::vertices[i] -= textureDx;
+		if (Object::vertices[i+1] == 1.0f)
+			Object::vertices[i+1] -= textureDx;
+		if (Object::vertices[i] == 0.0f)
+			Object::vertices[i] += textureDx;
+		if (Object::vertices[i + 1] == 0.0f)
+			Object::vertices[i + 1] += textureDx;
+	}
 
 	//model matrix
 	glm::mat4 model = glm::mat4(1.0f);

@@ -29,7 +29,7 @@ void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyCallBack, GLFWframebuffer
 	glfwSetScrollCallback(wind, scrollCallBack);
 	glfwSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
-
+	glDepthFunc(GL_LESS);
 
 	glViewport(0, 0, 800, 600);
 }
