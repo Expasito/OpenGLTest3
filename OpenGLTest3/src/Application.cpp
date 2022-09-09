@@ -9,10 +9,34 @@
 
 static bool mousePressed=false;
 static float fov = 45;
+static bool left = false, right = false, up1 = false, down = false;
+static float lastX = 400, lastY = 300;
+static float xoffset, yoffset;
+const float sensitivity = .3f;
+static float yaw=-90.0f, pitch=0, roll=0;
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 direction;
+
 
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		left = true;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
+		left = false;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		right = true;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
+		right = false;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		up1 = true;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
+		up1 = false;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		down = true;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
+		down = false;
 }
 
 void mouseButtonCallBack(GLFWwindow* window, int button, int action, int mods) {
@@ -27,7 +51,32 @@ void mouseButtonCallBack(GLFWwindow* window, int button, int action, int mods) {
 }
 
 void scrollCallBack(GLFWwindow* window, double xoffset, double yoffset) {
-	fov -= yoffset;
+	fov -= yoffset*3;
+	if (fov < 1.0f)
+		fov = 1;
+	if (fov > 120.0f)
+		fov = 120;
+
+}
+
+void mouseCallBack(GLFWwindow* window, double xpos, double ypos) {
+	xoffset = xpos - lastX;
+	yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+	yaw += xoffset;
+	pitch += yoffset;
+	if (pitch > 89.9)
+		pitch = 89.9;
+	if (pitch < -89.9)
+		pitch = -89.9;
+	
+	direction.x = glm::cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(direction);
 
 }
 
@@ -104,7 +153,7 @@ int main() {
 	
 	//Create window and set key callback functions
 	GLFWwindow* window = Render::init();
-	Render::callBacks(window, keyCallBack, framebuffer_size_callback, mouseButtonCallBack,scrollCallBack);
+	Render::callBacks(window, keyCallBack, framebuffer_size_callback, mouseButtonCallBack,scrollCallBack, mouseCallBack);
 
 	//Set random generator
 	std::srand(std::time(0));
@@ -131,6 +180,21 @@ int main() {
 			Object::vertices[i + 1] += textureDx;
 	}
 
+
+	//camera data
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+
+	//target
+	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+
+	//right axis
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+
+	//up axis
+	glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+
 	//model matrix
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0f, 1.0f, 0.0f));
@@ -142,6 +206,18 @@ int main() {
 	//projection matrix
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
+
+
+	//camera directions
+	
+
+	//modify view matrix
+	view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	const float radius = 10.0f;
+	
 
 	//define how the shaders read texture inputs
 	Shaders::defineTextureInputs();
@@ -217,13 +293,13 @@ int main() {
 	for (int i = 0; i < objsCount; i++) {
 		objs[i].translate.x = randomInRange()*4;
 		objs[i].translate.y = randomInRange() * 4;
-		objs[i].translate.z = randomInRange() * 4;
-		objs[i].rotate.x = randomInRange() * 4;
-		objs[i].rotate.y = randomInRange() * 4;
-		objs[i].rotate.z = randomInRange() * 4;
-		objs[i].scale.x = randomInRange() * 4;
-		objs[i].scale.y = randomInRange() * 4;
-		objs[i].scale.z = randomInRange() * 4;
+		objs[i].translate.z = randomInRange()*4;
+		objs[i].rotate.x = randomInRange();
+		objs[i].rotate.y = randomInRange();
+		objs[i].rotate.z = randomInRange();
+		objs[i].scale.x = randomInRange();
+		objs[i].scale.y = randomInRange();
+		objs[i].scale.z = randomInRange();
 	}
 
 	float timer = 0;
@@ -240,6 +316,27 @@ int main() {
 			model = glm::rotate(model, (float)timer * glm::radians(5.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
 		}
+		//move view matrix
+		/*float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));*/
+
+
+
+		//move left/right
+		const float camSpeed = .001f;
+		if (up1)
+			cameraPos += camSpeed*cameraFront;
+		if (down)
+			cameraPos -= camSpeed * cameraFront;
+		if (left)
+			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * camSpeed;
+		if (right)
+			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * camSpeed;
+
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+
 		projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
 		//Send camera data to shader
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -261,7 +358,7 @@ int main() {
 		glfwPollEvents();
 		auto t2 = std::chrono::high_resolution_clock::now();
 		auto ms_init = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-		std::cout << ms_init.count() << "ms\n";
+		//std::cout << ms_init.count() << "ms\n";
 		
 	}
 
