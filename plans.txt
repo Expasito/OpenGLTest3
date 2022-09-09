@@ -1,0 +1,10 @@
+Long term plans for OpenGLTest3
+
+1. Fully working camera 
+2. Instancing
+3. Spheres, cubes, triangles/pyramids
+4. multithreading
+5. lighting
+6. shadows
+7. raytracing
+8.
