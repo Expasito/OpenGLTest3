@@ -218,6 +218,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="Depend\glad\gl.c" />
     <ClCompile Include="Depend\glad\linmath_test.c" />
     <ClCompile Include="Depend\glad\vulkan.c" />
@@ -232,6 +233,7 @@
     <ClCompile Include="src\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.h" />
     <ClInclude Include="Depend\glad\gl.h" />
     <ClInclude Include="Depend\glad\KHR\khrplatform.h" />
     <ClInclude Include="Depend\glad\linmath.h" />
