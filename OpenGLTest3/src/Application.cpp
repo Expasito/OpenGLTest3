@@ -127,11 +127,13 @@ int main() {
 	
 	
 	//Create an array of objects to be drawn
-	const int objsCount = 100;
+	const int objsCount = 101;
 	Object* objs = new Object[objsCount];
-	for (int i = 0; i < objsCount; i++) {
+	for (int i = 0; i < objsCount-1; i++) {
 		objs[i] = Object();
 	}
+	objs[100] = Object();
+
 
 
 	const float textureDx = .01;
@@ -212,7 +214,7 @@ int main() {
 
 
 	//create random values for transform data
-	for (int i = 0; i < objsCount; i++) {
+	for (int i = 0; i < objsCount-1; i++) {
 		objs[i].translate.x = randomInRange()*4;
 		objs[i].translate.y = randomInRange() * 4;
 		objs[i].translate.z = randomInRange()*4;
@@ -223,6 +225,10 @@ int main() {
 		objs[i].scale.y = randomInRange();
 		objs[i].scale.z = randomInRange();
 	}
+
+	objs[100].scale.x = 100;
+	objs[100].scale.y = 100;
+	objs[100].scale.z = 100;
 
 	float timer = 0;
 	
@@ -253,13 +259,21 @@ int main() {
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		
-		
-		for (int i = 0; i < objsCount; i++) {
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		for (int i = 0; i < objsCount-1; i++) {
 			glUniform3fv(translateDataLoc, 1, glm::value_ptr(objs[i].translate));
 			glUniform3fv(rotateDataLoc, 1, glm::value_ptr(objs[i].rotate*(float)glfwGetTime()));
 			glUniform3fv(scaleDataLoc, 1, glm::value_ptr(objs[i].scale));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
+		glm::mat4 model2 = glm::mat4(1.0f);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		glUniform3fv(translateDataLoc, 1, glm::value_ptr(objs[100].translate));
+		glUniform3fv(rotateDataLoc, 1, glm::value_ptr(objs[100].rotate * (float)glfwGetTime()));
+		glUniform3fv(scaleDataLoc, 1, glm::value_ptr(objs[100].scale));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwSwapBuffers(window);
 		
