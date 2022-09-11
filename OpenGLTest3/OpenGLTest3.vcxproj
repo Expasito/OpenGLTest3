@@ -690,6 +690,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Deor.png" />
+    <Image Include="res\textures\Sky.png" />
     <Image Include="res\textures\Texture1.png" />
     <Image Include="res\textures\Texture2.png" />
   </ItemGroup>
