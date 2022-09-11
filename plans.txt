@@ -1,6 +1,6 @@
 Long term plans for OpenGLTest3
 
-1. Fully working camera 
+1. Fully working camera   COMPLETE
 2. Instancing
 3. Spheres, cubes, triangles/pyramids
 4. multithreading
