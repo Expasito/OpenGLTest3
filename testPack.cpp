@@ -1,7 +1,7 @@
 
 
 #include <iostream>
-
+#include <vector>
 
 struct cheese {
 	int a, b, c;
@@ -39,8 +39,44 @@ void multFloat(std::initializer_list<T> x) {
 
 }
 
+template<typename B, typename T>
+void decide(std::initializer_list<T> x) {
+	//if (typeid(T) == typeid(float)) {
+	//	multFloat(values);
+	//}
+	//if (typeid(T) == typeid(int)) {
+	//	addInt(values);
+	//}
+	//if (typeid(T) == typeid(cheese)) {
+	//	int arr[3];
+	//	std::copy()
+	//		T();
+	//}
+	//if (typeid(T) == typeid(apple)) {
+
+	//}
+	std::cout << typeid(x).name() << "\n";
+	std::cout << typeid(B).name() << "\n";
+	std::cout << typeid(T).name() << "\n";
+	const size_t value = x.size();
+	//const int size = value;
+	T arr[3];
+	std::copy(x.begin(), x.end(), std::begin(arr));
+	if (typeid(B) == typeid(cheese)) {
+		std::cout << "going cheese\n";
+		cheese a(arr[0], arr[1], arr[2]);
+		std::cout << a.a <<  " " << a.b << " " << a.c << "\n";
+	}
+	if (typeid(B) == typeid(apple)) {
+		std::cout << "going apple\n";
+		apple b(arr[0], arr[1]);
+		std::cout << b.x << " " << b.y << "\n";
+	}
+}
+
 template<typename T, typename... Args>
 static void foo2(Args... args) {
+	std::vector<size_t> things = {typeid(cheese).hash_code(),typeid(int).hash_code()};
 	auto values = { args... };
 	/*for (auto v : values) {
 		std::cout << v << "\n";
@@ -48,20 +84,10 @@ static void foo2(Args... args) {
 	const size_t value = sizeof...(args);
 	//std::cout << "size is" << value << "\n";
 	//std::cout << typeid(values).name() << "\n";
-	auto arr[value];
+	//auto arr[value];
 	//std::copy(args.begin(), args.end(), std::begin(arr));
-	if (typeid(T) == typeid(float)) {
-		multFloat(values);
-	}
-	if (typeid(T) == typeid(int)) {
-		addInt(values);
-	}
-	if (typeid(T) == typeid(cheese)) {
+	decide<T>(values);
 
-	}
-	if (typeid(T) == typeid(apple)) {
-
-	}
 
 	//int dummy[] = { 0, ((void)bar(std::forward<Args>(args)), 0) ... };
 
@@ -74,6 +100,7 @@ int main() {
 	//cheese b(1, 2, 3);
 	//cheese c();
 	foo2<cheese>(1, 2, 3);
+	foo2<apple>(1.3f, 2.3f);
 
 	//foo2<float>(1.0f, 2.9f);
 	return 0;
