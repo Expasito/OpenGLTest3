@@ -11,6 +11,8 @@
 #include <fstream>
 #include<string>
 #include <sstream>
+#include <vector>
+#include <map>
 #include "../Depend/SOIL/SOIL.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../Depend/SOIL/stb_image_aug.h"
@@ -20,3 +22,5 @@
 #include "../Depend/glm/glm.hpp"
 #include "../Depend/glm/gtc/matrix_transform.hpp"
 #include "../Depend/glm/gtc/type_ptr.hpp"
+namespace Components {};
+using namespace Components;

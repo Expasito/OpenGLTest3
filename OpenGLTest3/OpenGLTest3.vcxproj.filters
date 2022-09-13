@@ -54,6 +54,12 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Entities\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Headers.h">
@@ -980,6 +986,15 @@
     <ClInclude Include="src\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Entities\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\Components.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Depend\glm\CMakeLists.txt" />
@@ -1416,6 +1431,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\Sky.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\Default.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

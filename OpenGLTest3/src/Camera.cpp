@@ -33,10 +33,6 @@ void Camera::init() {
 
 void Camera::translate(bool left, bool right, bool up, bool down, bool forward, bool backward) {
 	glm::vec3 normed = glm::normalize(glm::cross(glm::cross(this->cameraFront, this->cameraUp),this->cameraFront));
-	std::cout << this->cameraPos.x << " " << this->cameraPos.y << " " << this->cameraPos.z << "      "
-		<< normed.x << " " << normed.y << " " << normed.z << "     "
-		<< this->cameraFront.x << " " << this->cameraFront.y << " " << this->cameraFront.z << "     "
-		<< this->cameraUp.x << " " << this->cameraUp.y << " " << this->cameraUp.z << "     " << "\n";
 	if (left)
 		this->cameraPos -= glm::normalize(glm::cross(this->cameraFront, this->cameraUp)) * this->speed;
 	if (right)

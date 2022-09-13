@@ -1,10 +1,25 @@
 
 #pragma once
 #include "Headers.h"
+#include "../Entities/Entity.h"
 
-namespace Render {
-	 GLFWwindow* init();
-	void callBacks(GLFWwindow*, GLFWkeyfun, GLFWframebuffersizefun, GLFWmousebuttonfun, GLFWscrollfun, GLFWcursorposfun);
+class Render {
+public:
+	//static std::vector<Entity> entities;
+	static struct uniform {
+		unsigned int loc;
+		std::string name;
+	};
+	static std::vector<Render::uniform> uniforms;
+	static float* vertices;
+	static size_t verticesSize;
+	static unsigned int VBO, VAO, EBO;
+	static GLFWwindow* init();
+	static void callBacks(GLFWwindow*, GLFWkeyfun, GLFWframebuffersizefun, GLFWmousebuttonfun, GLFWscrollfun, GLFWcursorposfun);
+	static void initEntities();
+	static void genCubeVert();
+	static void draw(Entity*);
+	static unsigned int getUniformLoc(std::string);
 
 
-}
+};
