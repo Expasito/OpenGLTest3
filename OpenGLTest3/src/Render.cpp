@@ -3,6 +3,7 @@
 float* Render::vertices = (float*)malloc(10 * sizeof(float));
 size_t Render::verticesSize = 10 * sizeof(float);
 std::vector<Render::uniform> Render::uniforms = {};
+Entity* Render::skybox = nullptr;
 //std::vector<Entity> Render::entities = {};
 unsigned int Render::VAO = 0, Render::VBO = 0, Render::EBO = 0;
 GLFWwindow* Render::init() {
@@ -131,7 +132,7 @@ void Render::draw(Entity* e) {
 		glBindTexture(GL_TEXTURE_2D, e->getComponent<TextureComponent>()->texture);
 	}
 	else {
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_2D, 1);
 	}
 	if (e->hasComponent<TransformComponent>()) {
 		//get position data to shader
@@ -146,5 +147,13 @@ void Render::draw(Entity* e) {
 		glUniform3fv(Render::getUniformLoc("rotateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->rotate * (float)glfwGetTime()));
 		glUniform3fv(Render::getUniformLoc("scaleData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->scale));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+}
+
+void Render::activateSkybox() {
+	if (Render::skybox == nullptr) {
+		Render::skybox = new Entity();
+		Render::skybox->addComponent<TransformComponent>()->scale = glm::vec3(50, 50, 50);
+		Render::skybox->addComponent<TextureComponent>()->texture = 5;
 	}
 }

@@ -1436,6 +1436,9 @@
     <Image Include="res\textures\Default.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\skybox2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Depend\lib-vc2022\glew32.lib" />

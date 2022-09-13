@@ -90,6 +90,8 @@ int main() {
 	unsigned int texture1 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
 	unsigned int texture2 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture2.png");
 	unsigned int texture3 = Shaders::loadTexture("../OpenGLTest3/res/textures/Deor.png");
+	unsigned int texture4 = Shaders::loadTexture("../OpenGLTest3/res/textures/skybox2.png");
+
 	
 
 
@@ -131,16 +133,21 @@ int main() {
 	float timer = 0;
 	
 	Entity e;
-	e.addComponent<TransformComponent>()->scale= glm::vec3(2,2,2);
+	e.addComponent<TransformComponent>();
 	e.addComponent<TextureComponent>();
-	e.getComponent<TextureComponent>()->texture=texture2;
+	e.getComponent<TextureComponent>()->texture=texture0;
 
+	Entity e2;
+	e2.addComponent<TransformComponent>()->translate = glm::vec3(.5, .5, 0);
+
+	Render::activateSkybox();
 
 	//main run loop
 	while (!glfwWindowShouldClose(window)) {
 		auto t1 =std::chrono::high_resolution_clock::now();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		Render::draw(Render::skybox);
 
 		if (!mousePressed) {
 			timer += .001;
@@ -165,6 +172,7 @@ int main() {
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 		Render::draw(&e);
+		Render::draw(&e2);
 
 		glfwSwapBuffers(window);
 		

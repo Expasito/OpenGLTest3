@@ -13,6 +13,7 @@ public:
 	static std::vector<Render::uniform> uniforms;
 	static float* vertices;
 	static size_t verticesSize;
+	static Entity* skybox;
 	static unsigned int VBO, VAO, EBO;
 	static GLFWwindow* init();
 	static void callBacks(GLFWwindow*, GLFWkeyfun, GLFWframebuffersizefun, GLFWmousebuttonfun, GLFWscrollfun, GLFWcursorposfun);
@@ -20,6 +21,7 @@ public:
 	static void genCubeVert();
 	static void draw(Entity*);
 	static unsigned int getUniformLoc(std::string);
+	static void activateSkybox();
 
 
 };

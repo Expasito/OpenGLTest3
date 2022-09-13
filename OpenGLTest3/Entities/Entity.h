@@ -44,6 +44,7 @@ public:
 				return (T*)(c.ptr);
 			}
 		}
+		return nullptr;
 	}
 	template<typename T>
 	bool hasComponent() {
