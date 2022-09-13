@@ -1,3 +1,7 @@
+Short term:
+1. default component adding system using parameter packs and typename
+2. each rectangle gets a texture(could be different) for a cube entity
+
 Long term plans for OpenGLTest3
 
 1. Fully working camera   COMPLETE
