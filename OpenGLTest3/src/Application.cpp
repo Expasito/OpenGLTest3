@@ -149,12 +149,12 @@ int main() {
 
 		Render::draw(Render::skybox);
 
-		if (!mousePressed) {
-			timer += .001;
-			model = glm::mat4(1.0f);
-			model = glm::rotate(model, (float)timer * glm::radians(5.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+		//if (!mousePressed) {
+		//	timer += .001;
+		//	model = glm::mat4(1.0f);
+		//	model = glm::rotate(model, (float)timer * glm::radians(5.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-		}
+		//}
 
 
 		//Adjust camera position
@@ -171,6 +171,7 @@ int main() {
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+		e.getComponent<TransformComponent>()->rotate = glm::vec3(glfwGetTime(), glfwGetTime(), glfwGetTime());
 		Render::draw(&e);
 		Render::draw(&e2);
 
@@ -179,7 +180,7 @@ int main() {
 		glfwPollEvents();
 		auto t2 = std::chrono::high_resolution_clock::now();
 		auto ms_init = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-		//std::cout << ms_init.count() << "ms\n";
+		std::cout << ms_init.count() << "ms\n";
 		
 	}
 
