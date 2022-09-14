@@ -36,7 +36,7 @@ void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyCallBack, GLFWframebuffer
 	glfwSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-	glfwSetInputMode(wind, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(wind, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(wind, 400, 300);
 }
 

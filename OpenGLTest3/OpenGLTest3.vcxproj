@@ -221,6 +221,8 @@
     <ClCompile Include="Depend\IMGUI\imgui.cpp" />
     <ClCompile Include="Depend\IMGUI\imgui_demo.cpp" />
     <ClCompile Include="Depend\IMGUI\imgui_draw.cpp" />
+    <ClCompile Include="Depend\ImGui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Depend\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Depend\IMGUI\imgui_tables.cpp" />
     <ClCompile Include="Depend\IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="Entities\Cube.cpp" />
@@ -242,10 +244,14 @@
   <ItemGroup>
     <ClInclude Include="Depend\IMGUI\imconfig.h" />
     <ClInclude Include="Depend\IMGUI\imgui.h" />
+    <ClInclude Include="Depend\ImGui\imgui_impl_glfw.h" />
+    <ClInclude Include="Depend\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Depend\ImGui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="Depend\IMGUI\imgui_internal.h" />
     <ClInclude Include="Depend\IMGUI\imstb_rectpack.h" />
     <ClInclude Include="Depend\IMGUI\imstb_textedit.h" />
     <ClInclude Include="Depend\IMGUI\imstb_truetype.h" />
+    <ClInclude Include="Depend\include\GLFW\glfw3native.h" />
     <ClInclude Include="Entities\Components.h" />
     <ClInclude Include="Entities\Cube.h" />
     <ClInclude Include="Entities\Entity.h" />

@@ -24,3 +24,6 @@
 #include "../Depend/glm/gtc/type_ptr.hpp"
 namespace Components {};
 using namespace Components;
+
+#include "../Depend/ImGui/imgui.h"
+#include "../Depend/ImGui/imgui_impl_glfw.h"
