@@ -5,7 +5,6 @@
 #include <random>
 #include "Camera.h"
 
-//#include "../Entities/Entity.h"
 
 #define clearMemory glfwDestroyWindow(window); glfwTerminate();
 
@@ -59,9 +58,6 @@ void mouseCallBack(GLFWwindow* window, double xpos, double ypos) {
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
-
-
-//Define static class variables to be reused
 
 
 float randomInRange() {
