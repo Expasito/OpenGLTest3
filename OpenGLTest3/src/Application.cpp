@@ -133,12 +133,12 @@ int main() {
 	float timer = 0;
 	
 	Entity e;
-	e.addComponent<TransformComponent>();
-	e.addComponent<TextureComponent>();
-	e.getComponent<TextureComponent>()->texture=texture0;
+	e.addComponent<TransformComponent>(glm::vec3(1,1,1));
+	e.addComponent<TextureComponent>(texture0);
 
 	Entity e2;
-	e2.addComponent<TransformComponent>()->translate = glm::vec3(.5, .5, 0);
+	e2.addComponent<TransformComponent>()->translate = glm::vec3(4, 4, 4);
+	e2.addComponent<TextureComponent>()->texture = texture2;
 
 	Render::activateSkybox();
 

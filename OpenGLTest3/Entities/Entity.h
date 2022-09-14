@@ -8,9 +8,6 @@ public:
 	static enum class entityType {
 		NONE = -1, CUBE = 1, SPHERE = 2
 	};
-	static enum class ComponentType {
-		NONE = -1, TransformComponent = 0, TextureComponent = 1
-	};
 	static struct ComposData {
 		void* ptr;
 		size_t hash;
@@ -19,23 +16,44 @@ public:
 			this->hash = hash;
 		}
 	};
-	//std::vector<Components> components;
 	std::vector<Entity::ComposData> compos;
 	Entity(entityType);
 	Entity();
 	~Entity();
 	
 	int getId();
-	template<typename T>
-	T* addComponent() {
+	template<typename T, typename...Args>
+	T* addComponent(Args...args) {
 		if (hasComponent<T>()) {
 			//Must warn user that component was already created
 			return getComponent<T>();
 		}
-		void* pt = new T();
-		this->compos.push_back({ pt,typeid(T).hash_code() });
+		const size_t size = sizeof...(args);
+		if constexpr(size >= 1) {
+			auto values = {args... };
+			helper<T>(values);
+		}
+		else {
+			void* pt = new T();
+			this->compos.push_back({ pt,typeid(T).hash_code() });
+		}
 		return getComponent<T>();
 	};
+
+	template<typename B, typename T>
+	void helper(std::initializer_list<T> x) {
+		const int size = x.size();
+		std::vector<T> arr;
+		arr.reserve(size);
+		std::copy(x.begin(), x.end(), std::back_inserter(arr));
+		std::vector<void*> arr2;
+		for (int i = 0; i < arr.size(); i++) {
+			void* ptr = (void*)(&arr.at(i));
+			arr2.push_back(ptr);
+		}
+		void* pt = new B(arr2);
+		this->compos.push_back({ pt,typeid(B).hash_code() });
+	}
 
 	template<typename T>
 	T* getComponent() {
