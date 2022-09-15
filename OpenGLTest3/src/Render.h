@@ -15,6 +15,8 @@ public:
 	static size_t verticesSize;
 	static Entity* skybox;
 	static unsigned int VBO, VAO, EBO;
+	static int windowWidth;
+	static int windowHeight;
 	static GLFWwindow* init();
 	static void callBacks(GLFWwindow*, GLFWkeyfun, GLFWframebuffersizefun, GLFWmousebuttonfun, GLFWscrollfun, GLFWcursorposfun);
 	static void initEntities();

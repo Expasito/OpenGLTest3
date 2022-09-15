@@ -27,3 +27,4 @@ using namespace Components;
 
 #include "../Depend/ImGui/imgui.h"
 #include "../Depend/ImGui/imgui_impl_glfw.h"
+#include "../Depend/ImGui/imgui_impl_opengl3.h"

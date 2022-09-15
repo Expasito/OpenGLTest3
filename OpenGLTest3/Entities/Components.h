@@ -28,6 +28,11 @@ namespace Components {
 		TextureComponent(std::vector<void*> v) : texture(*(unsigned int*)v.at(0)) {};
 
 	};
-	static std::vector<const type_info*> AllCompTypes = {&typeid(TransformComponent),&typeid(TextureComponent) };
+	struct ColorComponent {
+		glm::vec3 color = glm::vec3(1, 1, 1);
+		ColorComponent() = default;
+		ColorComponent(std::vector<void*> v) : color(*(glm::vec3*)v.at(0)) {};
+	};
+	static std::vector<const type_info*> AllCompTypes = {&typeid(TransformComponent),&typeid(TextureComponent), &typeid(ColorComponent)};
 
 };

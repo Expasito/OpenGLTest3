@@ -1470,6 +1470,7 @@
     </None>
     <None Include="res\shaders\Shader.shader" />
     <None Include="Depend\glm\CMakeSettings.json" />
+    <None Include="imgui.ini" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\Texture1.png">

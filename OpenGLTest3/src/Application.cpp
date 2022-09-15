@@ -4,7 +4,7 @@
 #include "Object.h"
 #include <random>
 #include "Camera.h"
-#include "../Depend/ImGui/imgui_impl_opengl3.h"
+
 
 
 #define clearMemory glfwDestroyWindow(window); glfwTerminate();
@@ -17,7 +17,7 @@ glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 view = glm::mat4(1.0f);
 glm::mat4 projection;
 
-static bool mousePressed=false;
+static bool leftMouseButton = false, middleMouseButton = false, rightMouseButton = false;
 
 static bool left = false, right = false, forward = false, backward = false, up=false, down=false;
 
@@ -37,14 +37,16 @@ void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods
 }
 
 void mouseButtonCallBack(GLFWwindow* window, int button, int action, int mods) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-		if (mousePressed) {
-			mousePressed = false;
-		}
-		else if (!mousePressed) {
-			mousePressed = true;
-		}
+	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+		leftMouseButton = action;
 	}
+	if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
+		middleMouseButton = action;
+	}
+	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+		rightMouseButton = action;
+	}
+
 }
 
 void scrollCallBack(GLFWwindow* window, double xoffset, double yoffset) {
@@ -53,7 +55,7 @@ void scrollCallBack(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void mouseCallBack(GLFWwindow* window, double xpos, double ypos) {
-	camera.rotate(xpos, ypos);
+	camera.rotate(xpos, ypos,rightMouseButton);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -68,7 +70,7 @@ float randomInRange() {
 
 
 int main() {
-
+	std::vector<Entity*> entities;
 	//Create window and set key callback functions
 	GLFWwindow* window = Render::init();
 	Render::callBacks(window, keyCallBack, framebuffer_size_callback, mouseButtonCallBack, scrollCallBack, mouseCallBack);
@@ -134,38 +136,54 @@ int main() {
 	Render::uniforms.push_back({viewLoc, "view"});
 	Render::uniforms.push_back({projectionLoc, "projection"});
 
+	unsigned int colorLoc = glGetUniformLocation(shader, "color");
+
+	Render::uniforms.push_back({ colorLoc,"color" });
 
 
 	float timer = 0;
 	
-	Entity e;
-	e.addComponent<TransformComponent>(glm::vec3(1,1,1));
-	e.addComponent<TextureComponent>(texture0);
-
-	Entity e2;
-	e2.addComponent<TransformComponent>()->translate = glm::vec3(4, 4, 4);
-	e2.addComponent<TextureComponent>()->texture = texture2;
 
 	Render::activateSkybox();
 
-	bool show_demo_window = true;
-	bool show_another_window = false;
+	bool show_demo_window = false;
+	bool show_another_window = true;
+	bool other_window = true;
+	bool show_window = true;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+	struct scene {
+		//std::vector<Entity*> entities;
+		std::vector<Entity*> entityData;
+		std::vector<unsigned int> textures;
+	};
+
+	static scene sceneData;
+	sceneData.textures = { texture0,texture1,texture2,texture3,texture4 };
+
+
+	ImGuiWindowFlags window_flags = 0;
+
+	window_flags |= ImGuiWindowFlags_NoMove;
+	window_flags |= ImGuiWindowFlags_NoResize;
+	window_flags |= ImGuiWindowFlags_NoCollapse;
+	show_window = NULL;
+
+
+	//TimeDeltaTime uses
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
 	//main run loop
 	while (!glfwWindowShouldClose(window)) {
 		auto t1 =std::chrono::high_resolution_clock::now();
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+		camera.speed = camera.baseSpeed * deltaTime;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Render::draw(Render::skybox);
 
-		//if (!mousePressed) {
-		//	timer += .001;
-		//	model = glm::mat4(1.0f);
-		//	model = glm::rotate(model, (float)timer * glm::radians(5.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-
-		//}
-		//ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -173,35 +191,166 @@ int main() {
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
-		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 		{
-			static float f = 0.0f;
+			static float f = 10.0f;
 			static int counter = 0;
 
-			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+			ImGui::Begin("Hello, world!", &show_window, window_flags);
 
-			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-			ImGui::Checkbox("Another Window", &show_another_window);
+			ImGui::Text("Entities: %d",entities.size());
+			ImGui::Checkbox("Components Window", &other_window);
+			ImGui::Checkbox("Entities Window", &show_another_window);
 
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+			ImGui::SliderFloat("Camera Speed", &f, 0.0f, 20.0f);
 
-			if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-				counter++;
-			ImGui::SameLine();
-			ImGui::Text("counter = %d", counter);
+			if (ImGui::Button("Create Entity")) {
+				for (int i = 0; i < 1; i++) {
+				Entity* e3 = new Entity();
+				entities.push_back(e3);
+				sceneData.entityData.push_back(e3);
+
+				}
+			}
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::End();
-		}
 
+			camera.baseSpeed = f;
+		}
+		static bool selection[10]{};
+		static int selected = -1;
 		if (show_another_window)
 		{
-			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-			ImGui::Text("Hello from another window!");
-			if (ImGui::Button("Close Me"))
-				show_another_window = false;
+			ImGui::Begin("Entities",&show_another_window,window_flags); 
+			
+			if (ImGui::TreeNode("Entities"))
+			{
+				for (int n = 0; n < entities.size(); n++)
+				{
+					char buf[32];
+					sprintf_s(buf, "EntityID: %d", entities.at(n)->getId());
+					if (ImGui::Selectable(buf, selected == n))
+						selected = n;
+				}
+				ImGui::TreePop();
+			}
+			ImGui::End();
+		}
+		
+		bool inputs_step = true;
+		const float   f32_zero = 0.f, f32_one = 1.f, f32_lo_a = -10000000000.0f, f32_hi_a = +10000000000.0f;
+		static ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+		if (other_window)
+		{
+			ImGui::Begin("Data", &other_window, window_flags);
+			if (selected != -1) {
+				//struct 
+				std::string str = "EntityId: " + std::to_string(entities.at(selected)->getId());
+				ImGui::Text(str.c_str());
+				ImGui::Text("Components: ");
+				Entity* et = sceneData.entityData.at(selected);
+				if (et->hasComponent<TransformComponent>()) {
+					if (ImGui::TreeNode(std::string("Transform").c_str()))
+					{
+						ImGui::Text("Translate");
+						ImGui::DragFloat("X", &(et->getComponent<TransformComponent>()->translate.x), -0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::DragFloat("Y", &(et->getComponent<TransformComponent>()->translate.y), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::DragFloat("Z", &(et->getComponent<TransformComponent>()->translate.z), -0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::Text("Rotate");
+						ImGui::DragFloat("X ", &(et->getComponent<TransformComponent>()->rotate.x), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::DragFloat("Y ", &(et->getComponent<TransformComponent>()->rotate.y), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::DragFloat("Z ", &(et->getComponent<TransformComponent>()->rotate.z), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::Text("Scale");
+						ImGui::DragFloat("X  ", &(et->getComponent<TransformComponent>()->scale.x), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::DragFloat("Y  ", &(et->getComponent<TransformComponent>()->scale.y), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::DragFloat("Z  ", &(et->getComponent<TransformComponent>()->scale.z), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						if (ImGui::Button("Remove Transform")) {
+							et->removeComponent<TransformComponent>();
+						}
+						ImGui::TreePop();
+
+					}
+					
+				}
+				if (et->hasComponent<TextureComponent>()) {
+					if (ImGui::TreeNode(std::string("Texture").c_str()))
+					{
+						int temp = et->getComponent<TextureComponent>()->texture;
+						for (int n = 0; n < sceneData.textures.size(); n++)
+						{
+							char buf[32];
+							sprintf_s(buf, "Texture: %d", sceneData.textures.at(n));
+							if (ImGui::Selectable(buf, temp == sceneData.textures.at(n)))
+								temp = sceneData.textures.at(n);
+						}
+						et->getComponent<TextureComponent>()->texture = temp;
+						if (ImGui::Button("Remove Texture")) {
+							et->removeComponent<TextureComponent>();
+						}
+						ImGui::TreePop();
+
+					}
+
+				}
+				if (et->hasComponent<ColorComponent>()) {
+					if (ImGui::TreeNode(std::string("Color").c_str()))
+					{
+						glm::vec3 temp = et->getComponent<ColorComponent>()->color;
+						ImVec4 temp2 = ImVec4(temp.x,temp.y,temp.z, 1.00f);
+						ImGui::ColorEdit3("clear color", (float*)&temp2);
+						temp.x = temp2.x;
+						temp.y = temp2.y;
+						temp.z = temp2.z;
+						et->getComponent<ColorComponent>()->color = temp;
+						if (ImGui::Button("Remove Color")) {
+							et->removeComponent<ColorComponent> ();
+						}
+						ImGui::TreePop();
+
+					}
+
+				}
+				ImGui::NewLine();
+				if (ImGui::TreeNode(std::string("Add Other Components").c_str()))
+				{
+					if (!et->hasComponent<TransformComponent>()) {
+						if (ImGui::Button("Transform")) {
+							et->addComponent<TransformComponent>(glm::vec3(0,0,0));
+						}
+					}
+					if (!et->hasComponent<TextureComponent>()) {
+						if (ImGui::Button("Texture")) {
+							et->addComponent<TextureComponent>(0);
+						}
+					}
+					if (!et->hasComponent<ColorComponent>()) {
+						if (ImGui::Button("Color")) {
+							et->addComponent<ColorComponent>(glm::vec3(1,1,1));
+						}
+					}
+					ImGui::TreePop();
+
+				}
+				ImGui::NewLine();
+				ImGui::NewLine();
+				if (ImGui::Button(std::string("Delete Entity").c_str()))
+				{
+					//delete sceneData.entityData.at(selected - 1).et;
+					//sceneData.entityData.erase(sceneData.entityData.begin()+selected - 1);
+					
+					//sceneData.entityData.erase(sceneData.entityData.end());
+					//sceneData.entityData.erase(sceneData.entityData.begin() + selected - 1);
+					sceneData.entityData.erase(sceneData.entityData.begin() + selected);
+					entities.erase(entities.begin()+selected);
+					selected =- 1;
+
+				}
+
+				
+			}
+			else {
+				ImGui::Text("No Entity Selected");
+			};
 			ImGui::End();
 		}
 
@@ -211,7 +360,7 @@ int main() {
 		view = glm::lookAt(camera.cameraPos, camera.cameraPos + camera.cameraFront, camera.cameraUp);
 
 
-		projection = glm::perspective(glm::radians(camera.fov), 800.0f / 600.0f, 0.01f, 1000.0f);
+		projection = glm::perspective(glm::radians(camera.fov), (float)Render::windowWidth/(float)Render::windowHeight, 0.01f, 1000.0f);
 
 
 		//Send camera data to shader
@@ -219,9 +368,10 @@ int main() {
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		e.getComponent<TransformComponent>()->rotate = glm::vec3(glfwGetTime(), glfwGetTime(), glfwGetTime());
-		Render::draw(&e);
-		Render::draw(&e2);
+
+		for (Entity* en : entities) {
+			Render::draw(en);
+		}
 
 
 		ImGui::Render();
@@ -241,5 +391,8 @@ int main() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+	for (Entity* ent : entities) {
+		delete ent;
+	}
 
 }

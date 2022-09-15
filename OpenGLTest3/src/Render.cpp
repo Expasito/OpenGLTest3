@@ -1,5 +1,7 @@
 #include "Render.h"
 
+int Render::windowHeight = 600;
+int Render::windowWidth = 800;
 float* Render::vertices = (float*)malloc(10 * sizeof(float));
 size_t Render::verticesSize = 10 * sizeof(float);
 std::vector<Render::uniform> Render::uniforms = {};
@@ -12,9 +14,10 @@ GLFWwindow* Render::init() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_MAXIMIZED,GLFW_TRUE);
 
 	//create window pointer
-	GLFWwindow* wind = glfwCreateWindow(800, 600, "Opengl window", nullptr, nullptr);
+	GLFWwindow* wind = glfwCreateWindow(windowWidth, windowHeight, "Opengl window", nullptr, nullptr);
 
 	//check to make sure glfw and window are working
 	if (!glfwInit() || wind==NULL) {
@@ -134,6 +137,13 @@ void Render::draw(Entity* e) {
 	else {
 		glBindTexture(GL_TEXTURE_2D, 1);
 	}
+	if (e->hasComponent<ColorComponent>()) {
+		glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(e->getComponent<ColorComponent>()->color));
+	}
+	else {
+		glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(glm::vec3(1,1,1)));
+
+	}
 	if (e->hasComponent<TransformComponent>()) {
 		//get position data to shader
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -144,8 +154,9 @@ void Render::draw(Entity* e) {
 		glEnableVertexAttribArray(2);
 		
 		glUniform3fv(Render::getUniformLoc("translateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->translate));
-		glUniform3fv(Render::getUniformLoc("rotateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->rotate * (float)glfwGetTime()));
+		glUniform3fv(Render::getUniformLoc("rotateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->rotate));
 		glUniform3fv(Render::getUniformLoc("scaleData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->scale));
+
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 }

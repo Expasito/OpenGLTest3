@@ -49,23 +49,26 @@ void Camera::translate(bool left, bool right, bool up, bool down, bool forward, 
 	}
 }
 
-void Camera::rotate(float xpos, float ypos) {
+void Camera::rotate(float xpos, float ypos, bool mousePressed) {
 	this->xoffset = xpos - this->lastx;
 	this->yoffset = this->lasty - ypos;
 	this->lastx = xpos;
 	this->lasty = ypos;
 	xoffset *= this->sensitivity;
 	yoffset *= this->sensitivity;
-	this->yaw += xoffset;
-	this->pitch += yoffset;
-	if (this->pitch > 89.9)
-		this->pitch = 89.9;
-	if (this->pitch < -89.9)
-		this->pitch = -89.9;
-	this->cameraDirection.x = glm::cos(glm::radians(this->yaw)) * glm::cos(glm::radians(this->pitch));
-	this->cameraDirection.y = glm::sin(glm::radians(this->pitch));
-	this->cameraDirection.z = glm::sin(glm::radians(this->yaw)) * glm::cos(glm::radians(this->pitch));
-	this->cameraFront = glm::normalize(this->cameraDirection);
+	if (mousePressed) {
+		this->yaw += xoffset;
+		this->pitch += yoffset;
+		if (this->pitch > 89.9)
+			this->pitch = 89.9;
+		if (this->pitch < -89.9)
+			this->pitch = -89.9;
+		this->cameraDirection.x = glm::cos(glm::radians(this->yaw)) * glm::cos(glm::radians(this->pitch));
+		this->cameraDirection.y = glm::sin(glm::radians(this->pitch));
+		this->cameraDirection.z = glm::sin(glm::radians(this->yaw)) * glm::cos(glm::radians(this->pitch));
+		this->cameraFront = glm::normalize(this->cameraDirection);
+
+	}
 }
 
 void Camera::zoom(float xoffset, float yoffset) {

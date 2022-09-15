@@ -4,12 +4,13 @@ class Camera
 {
 public:
 	//Camera details
-	float fov = 45.0f;
+	float fov = 80.0f;
 	float sensitivity = .4f;
 	float yaw = 90.0f;
 	float pitch = 0.0f;
 	float roll = 0.0f;
-	float speed = .005f;
+	float baseSpeed = 10.0f;
+	float speed = baseSpeed;
 	float zoomSensitivity = 3.0f;
 	//Camera vectors
 	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -31,7 +32,7 @@ public:
 	Camera();
 
 	void translate(bool left, bool right, bool up, bool down, bool forward, bool backward);
-	void rotate(float xpos, float ypos);
+	void rotate(float xpos, float ypos, bool mousePressed);
 	void zoom(float xoffset, float yoffset);
 	
 

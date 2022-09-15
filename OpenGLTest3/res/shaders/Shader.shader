@@ -57,7 +57,7 @@ uniform vec3 scaleData;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-
+uniform vec3 color;
 out vec3 col;
 
 void main(){
@@ -69,7 +69,7 @@ void main(){
     vec4 localPos = trans * rotX * rotY * rotZ * scal * vec4(position.xyz, 1);
     //vec4 localPos = vec4(position.xyz, 1);
     gl_Position = projection * view * model * localPos;
-    col = position.xyz;
+    col = color;
 	TexCord = vec2(textCords.x,textCords.y*1);
 };
 
@@ -83,5 +83,5 @@ in vec3 col;
 uniform sampler2D Texture;
 
 void main(){
-    FragColor = texture(Texture, TexCord);
+    FragColor = texture(Texture, TexCord)*vec4(col,1);
 };
