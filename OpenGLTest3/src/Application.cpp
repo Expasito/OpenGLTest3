@@ -57,9 +57,25 @@ void scrollCallBack(GLFWwindow* window, double xoffset, double yoffset) {
 void mouseCallBack(GLFWwindow* window, double xpos, double ypos) {
 	camera.rotate(xpos, ypos,rightMouseButton);
 }
+void resizeSceneWindow(float windowx, float windowy) {
+	if (Render::windowHeight != windowx || Render::windowWidth != windowy) {
+		Render::windowWidth = windowx;
+		Render::windowHeight = windowy;
+		glBindTexture(GL_TEXTURE_2D, Render::colorTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Render::windowWidth, Render::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Render::colorTexture, 0);
+
+		glBindTexture(GL_TEXTURE_2D, Render::depthTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, Render::windowWidth, Render::windowHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, Render::depthTexture, 0);
+		glViewport(0, 0, Render::windowWidth, Render::windowHeight);
+	}
+}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
+	resizeSceneWindow(width, height);
 
 }
 
@@ -152,10 +168,8 @@ int main() {
 	bool other_window = true;
 	bool show_window = true;
 	bool last_window = true;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	struct scene {
-		//std::vector<Entity*> entities;
 		std::vector<Entity*> entityData;
 		std::vector<unsigned int> textures;
 	};
@@ -166,17 +180,15 @@ int main() {
 
 	ImGuiWindowFlags window_flags = 0;
 
-	window_flags |= ImGuiWindowFlags_NoMove;
-	window_flags |= ImGuiWindowFlags_NoResize;
+	//Uncomment for other window options
+	//window_flags |= ImGuiWindowFlags_NoMove;
+	//window_flags |= ImGuiWindowFlags_NoResize;
 	window_flags |= ImGuiWindowFlags_NoCollapse;
 	show_window = NULL;
 
 
-	///////////////////////////////////////////////////////
 	//Frame buffer and rendering is here
-	
 	Render::prepareFramebuffer();
-	///////////////////////////////////////////////////////
 
 
 
@@ -202,9 +214,6 @@ int main() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		//bind framebuffer
-		
 
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
@@ -259,23 +268,10 @@ int main() {
 		{
 			ImGui::Begin("Scene");
 			{
-				ImGui::BeginChild("GameRender");
-
 				float width = ImGui::GetContentRegionAvail().x;
 				float height = ImGui::GetContentRegionAvail().y;
+				resizeSceneWindow(width, height);
 
-				Render::windowWidth = width;
-				Render::windowHeight = height;
-				glBindTexture(GL_TEXTURE_2D, Render::colorTexture);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Render::windowWidth, Render::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Render::colorTexture, 0);
-
-				glBindTexture(GL_TEXTURE_2D, Render::depthTexture);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, Render::windowWidth, Render::windowHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, Render::depthTexture, 0);
-				glViewport(0, 0, width, height);
 				ImGui::Image(
 					(ImTextureID)Render::colorTexture,
 					ImGui::GetContentRegionAvail(),
@@ -283,7 +279,6 @@ int main() {
 					ImVec2(1, 0)
 				);
 			}
-			ImGui::EndChild();
 			ImGui::End();
 		}
 
@@ -386,11 +381,6 @@ int main() {
 				ImGui::NewLine();
 				if (ImGui::Button(std::string("Delete Entity").c_str()))
 				{
-					//delete sceneData.entityData.at(selected - 1).et;
-					//sceneData.entityData.erase(sceneData.entityData.begin()+selected - 1);
-					
-					//sceneData.entityData.erase(sceneData.entityData.end());
-					//sceneData.entityData.erase(sceneData.entityData.begin() + selected - 1);
 					sceneData.entityData.erase(sceneData.entityData.begin() + selected);
 					entities.erase(entities.begin()+selected);
 					selected =- 1;
@@ -404,9 +394,7 @@ int main() {
 			};
 			ImGui::End();
 		}
-		//unbind
 
-		std::cout << "Width: " << Render::windowWidth << " Height: " << Render::windowHeight << "\n";
 		//Adjust camera position
 		camera.translate(left, right, up, down,forward,backward);
 
@@ -436,7 +424,6 @@ int main() {
 		glfwPollEvents();
 		auto t2 = std::chrono::high_resolution_clock::now();
 		auto ms_init = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-		std::cout << ms_init.count() << "ms\n";
 		
 	}
 
