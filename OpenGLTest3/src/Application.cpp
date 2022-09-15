@@ -85,7 +85,6 @@ float randomInRange() {
 }
 
 
-
 int main() {
 	std::vector<Entity*> entities;
 	//Create window and set key callback functions
@@ -100,6 +99,9 @@ int main() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::GetIO().ConfigFlags |= 1 << 6;
+	static bool yes = true;
+	
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	const char* glsl_version = "#version 330";
@@ -214,7 +216,8 @@ int main() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
+		//ActivateDockingSpace(&yes);
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
