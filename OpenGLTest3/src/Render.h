@@ -15,6 +15,7 @@ public:
 	static size_t verticesSize;
 	static Entity* skybox;
 	static unsigned int VBO, VAO, EBO;
+	static unsigned int fbo, colorTexture, depthTexture;
 	static int windowWidth;
 	static int windowHeight;
 	static GLFWwindow* init();
@@ -24,6 +25,7 @@ public:
 	static void draw(Entity*);
 	static unsigned int getUniformLoc(std::string);
 	static void activateSkybox();
+	static void prepareFramebuffer();
 
 
 };

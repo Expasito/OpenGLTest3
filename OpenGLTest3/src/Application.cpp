@@ -60,6 +60,7 @@ void mouseCallBack(GLFWwindow* window, double xpos, double ypos) {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
+
 }
 
 
@@ -150,6 +151,7 @@ int main() {
 	bool show_another_window = true;
 	bool other_window = true;
 	bool show_window = true;
+	bool last_window = true;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	struct scene {
@@ -170,6 +172,15 @@ int main() {
 	show_window = NULL;
 
 
+	///////////////////////////////////////////////////////
+	//Frame buffer and rendering is here
+	
+	Render::prepareFramebuffer();
+	///////////////////////////////////////////////////////
+
+
+
+
 	//TimeDeltaTime uses
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -181,12 +192,19 @@ int main() {
 		lastFrame = currentFrame;
 		camera.speed = camera.baseSpeed * deltaTime;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBindFramebuffer(GL_FRAMEBUFFER, Render::fbo);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Render::draw(Render::skybox);
 
+		
+		
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		//bind framebuffer
+		
 
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
@@ -236,7 +254,40 @@ int main() {
 			}
 			ImGui::End();
 		}
-		
+		//framebuffer window
+		if (last_window)
+		{
+			ImGui::Begin("Scene");
+			{
+				ImGui::BeginChild("GameRender");
+
+				float width = ImGui::GetContentRegionAvail().x;
+				float height = ImGui::GetContentRegionAvail().y;
+
+				Render::windowWidth = width;
+				Render::windowHeight = height;
+				glBindTexture(GL_TEXTURE_2D, Render::colorTexture);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Render::windowWidth, Render::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Render::colorTexture, 0);
+
+				glBindTexture(GL_TEXTURE_2D, Render::depthTexture);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, Render::windowWidth, Render::windowHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, Render::depthTexture, 0);
+				glViewport(0, 0, width, height);
+				ImGui::Image(
+					(ImTextureID)Render::colorTexture,
+					ImGui::GetContentRegionAvail(),
+					ImVec2(0, 1),
+					ImVec2(1, 0)
+				);
+			}
+			ImGui::EndChild();
+			ImGui::End();
+		}
+
+
 		bool inputs_step = true;
 		const float   f32_zero = 0.f, f32_one = 1.f, f32_lo_a = -10000000000.0f, f32_hi_a = +10000000000.0f;
 		static ImGuiSliderFlags flags = ImGuiSliderFlags_None;
@@ -353,7 +404,9 @@ int main() {
 			};
 			ImGui::End();
 		}
+		//unbind
 
+		std::cout << "Width: " << Render::windowWidth << " Height: " << Render::windowHeight << "\n";
 		//Adjust camera position
 		camera.translate(left, right, up, down,forward,backward);
 
@@ -373,6 +426,7 @@ int main() {
 			Render::draw(en);
 		}
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

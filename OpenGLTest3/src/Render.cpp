@@ -8,6 +8,8 @@ std::vector<Render::uniform> Render::uniforms = {};
 Entity* Render::skybox = nullptr;
 //std::vector<Entity> Render::entities = {};
 unsigned int Render::VAO = 0, Render::VBO = 0, Render::EBO = 0;
+//Framebuffer stuff
+unsigned int Render::fbo = 0, Render::colorTexture = 0, Render::depthTexture = 0;
 GLFWwindow* Render::init() {
 	//Basic glfw init methods
 	glfwInit();
@@ -167,4 +169,25 @@ void Render::activateSkybox() {
 		Render::skybox->addComponent<TransformComponent>()->scale = glm::vec3(50, 50, 50);
 		Render::skybox->addComponent<TextureComponent>()->texture = 5;
 	}
+}
+
+void Render::prepareFramebuffer() {
+	glGenFramebuffers(1, &Render::fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, Render::fbo);
+
+	glGenTextures(1, &Render::colorTexture);
+	glBindTexture(GL_TEXTURE_2D, Render::colorTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Render::windowWidth, Render::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Render::colorTexture, 0);
+
+	glGenTextures(1, &Render::depthTexture);
+	glBindTexture(GL_TEXTURE_2D, Render::depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, Render::windowWidth, Render::windowHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, Render::depthTexture, 0);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 }
