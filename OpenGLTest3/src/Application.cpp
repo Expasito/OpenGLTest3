@@ -240,7 +240,7 @@ int main() {
 			ImGui::SliderFloat("Camera Speed", &f, 0.0f, 20.0f);
 
 			if (ImGui::Button("Create Entity")) {
-				for (int i = 0; i < 1000; i++) {
+				for (int i = 0; i < 1; i++) {
 				Entity* e3 = new Entity();
 				e3->addComponent<TransformComponent>(1,1,1);
 				entities.push_back(e3);
