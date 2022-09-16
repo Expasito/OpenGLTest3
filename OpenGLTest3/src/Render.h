@@ -11,11 +11,16 @@ public:
 		std::string name;
 	};
 	static std::vector<Render::uniform> uniforms;
+	static std::vector<glm::vec2> translations;
+	static std::vector<glm::vec3> rotations;
+	static std::vector<glm::vec3> scalations;
+	static std::vector<glm::vec3> color;
 	static float* vertices;
 	static size_t verticesSize;
 	static Entity* skybox;
 	static unsigned int VBO, VAO, EBO;
 	static unsigned int fbo, colorTexture, depthTexture;
+	static unsigned int instanceVBO;
 	static int windowWidth;
 	static int windowHeight;
 	static GLFWwindow* init();
@@ -23,6 +28,7 @@ public:
 	static void initEntities();
 	static void genCubeVert();
 	static void draw(Entity*);
+	static void rend();
 	static unsigned int getUniformLoc(std::string);
 	static void activateSkybox();
 	static void prepareFramebuffer();

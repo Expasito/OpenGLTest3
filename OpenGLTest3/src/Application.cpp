@@ -131,6 +131,7 @@ int main() {
 	}
 
 	unsigned int shader = shaderRet.id;
+	std::cout << "shader " << shader << "\n";
 	glUseProgram(shader);
 
 
@@ -155,9 +156,14 @@ int main() {
 	Render::uniforms.push_back({viewLoc, "view"});
 	Render::uniforms.push_back({projectionLoc, "projection"});
 
-	unsigned int colorLoc = glGetUniformLocation(shader, "color");
-
-	Render::uniforms.push_back({ colorLoc,"color" });
+	//unsigned int colorLoc = glGetUniformLocation(shader, "color");
+	//unsigned int translationsLoc = glGetUniformLocation(shader, "translations");
+	//unsigned int rotationsLoc = glGetUniformLocation(shader, "rotations");
+	//unsigned int scalationsLoc = glGetUniformLocation(shader, "scalations");
+	//Render::uniforms.push_back({ colorLoc,"color" });
+	//Render::uniforms.push_back({ translationsLoc,"translations" });
+	//Render::uniforms.push_back({ rotationsLoc,"rotations" });
+	//Render::uniforms.push_back({ scalationsLoc,"scalations" });
 
 
 	float timer = 0;
@@ -234,8 +240,9 @@ int main() {
 			ImGui::SliderFloat("Camera Speed", &f, 0.0f, 20.0f);
 
 			if (ImGui::Button("Create Entity")) {
-				for (int i = 0; i < 1; i++) {
+				for (int i = 0; i < 1000; i++) {
 				Entity* e3 = new Entity();
+				e3->addComponent<TransformComponent>(1,1,1);
 				entities.push_back(e3);
 				sceneData.entityData.push_back(e3);
 
@@ -417,7 +424,12 @@ int main() {
 			Render::draw(en);
 		}
 
+		Render::rend();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		Render::translations = {};
+		Render::rotations = {};
+		Render::scalations = {};
+		Render::color = {};
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

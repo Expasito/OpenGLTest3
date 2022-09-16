@@ -3,6 +3,7 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 2) in vec2 textCords;
+layout(location = 3) in vec2 translation;
 
 mat4 scale(float x, float y, float z) {
     return mat4(
@@ -50,17 +51,27 @@ out vec2 TexCord;
 
 
 
-uniform vec3 translateData;
-uniform vec3 rotateData;
-uniform vec3 scaleData;
+//uniform vec3 translateData;
+//uniform vec3 rotateData;
+//uniform vec3 scaleData;
+//uniform vec3 translations[500];
+//uniform vec3 rotations[500];
+//uniform vec3 scalations[500];
+//uniform vec3 color[500];
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec3 color;
+//uniform vec3 color;
+
 out vec3 col;
 
 void main(){
+    vec3 translateData = vec3(translation.xy,1);
+    vec3 rotateData = vec3(0,0,0);
+    vec3 scaleData = vec3(1,1,1);
+    vec3 color = vec3(1, 1, 1);
+
     mat4 trans=translate(translateData.x,translateData.y,translateData.z);
     mat4 rotX = RotateX(rotateData.x);
     mat4 rotY = RotateY(rotateData.y);

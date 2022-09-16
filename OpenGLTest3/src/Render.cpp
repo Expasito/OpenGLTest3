@@ -10,6 +10,12 @@ Entity* Render::skybox = nullptr;
 unsigned int Render::VAO = 0, Render::VBO = 0, Render::EBO = 0;
 //Framebuffer stuff
 unsigned int Render::fbo = 0, Render::colorTexture = 0, Render::depthTexture = 0;
+unsigned int Render::instanceVBO = 0;
+std::vector<glm::vec2> Render::translations = {};
+std::vector<glm::vec3> Render::rotations = {};
+std::vector<glm::vec3> Render::scalations = {};
+std::vector<glm::vec3> Render::color = {};
+
 GLFWwindow* Render::init() {
 	//Basic glfw init methods
 	glfwInit();
@@ -118,8 +124,9 @@ void Render::initEntities() {
 	glBindVertexArray(Render::VAO);
 
 	glGenBuffers(1, &Render::VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, Render::VBO);
-	glBufferData(GL_ARRAY_BUFFER, Render::verticesSize, Render::vertices, GL_STATIC_DRAW);
+	
+	glGenBuffers(1, &Render::instanceVBO);
+	
 }
 
 unsigned int Render::getUniformLoc(std::string name) {
@@ -133,6 +140,7 @@ unsigned int Render::getUniformLoc(std::string name) {
 
 void Render::draw(Entity* e) {
 	//Tell GPU how to read Cube data
+	
 	if (e->hasComponent<TextureComponent>()) {
 		glBindTexture(GL_TEXTURE_2D, e->getComponent<TextureComponent>()->texture);
 	}
@@ -140,27 +148,73 @@ void Render::draw(Entity* e) {
 		glBindTexture(GL_TEXTURE_2D, 1);
 	}
 	if (e->hasComponent<ColorComponent>()) {
-		glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(e->getComponent<ColorComponent>()->color));
+		//Render::color.push_back(e->getComponent<ColorComponent>()->color);
+		//glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(e->getComponent<ColorComponent>()->color));
 	}
 	else {
-		glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(glm::vec3(1,1,1)));
+		//Render::color.push_back(glm::vec3(1, 1, 1));
+		//glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(glm::vec3(1,1,1)));
 
 	}
 	if (e->hasComponent<TransformComponent>()) {
 		//get position data to shader
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
 
-		//get texture data to shader
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(2);
 		
-		glUniform3fv(Render::getUniformLoc("translateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->translate));
-		glUniform3fv(Render::getUniformLoc("rotateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->rotate));
-		glUniform3fv(Render::getUniformLoc("scaleData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->scale));
+		//glUniform3fv(Render::getUniformLoc("translateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->translate));
+		//glUniform3fv(Render::getUniformLoc("rotateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->rotate));
+		//glUniform3fv(Render::getUniformLoc("scaleData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->scale));
+		Render::translations.push_back(e->getComponent<TransformComponent>()->translate);
+		Render::rotations.push_back(e->getComponent<TransformComponent>()->rotate);
+		Render::scalations.push_back(e->getComponent<TransformComponent>()->scale);
+		Render::color.push_back(glm::vec3(1, 1, 1));
 
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
+}
+
+void Render::rend() {
+
+	
+
+	glBindTexture(GL_TEXTURE_2D, 1);
+	glBindBuffer(GL_ARRAY_BUFFER, Render::VBO);
+	glBufferData(GL_ARRAY_BUFFER, Render::verticesSize, Render::vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//get texture data to shader
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	//get instancing uniorm array data to shader
+	//for (int i = 0; i < Render::translations.size(); i++) {
+	//	//std::cout << Render::translations.at(i).x << Render::translations.at(i).y << Render::translations.at(i).z << "\n";
+	//	//std::cout << Render::rotations.at(i).x << Render::rotations.at(i).y << Render::rotations.at(i).z << "\n";
+	//	//std::cout << Render::scalations.at(i).x << Render::scalations.at(i).y << Render::scalations.at(i).z << "\n";
+	//	//std::cout << Render::color.at(i).x << Render::color.at(i).y << Render::color.at(i).z << "\n";
+	//	
+	//	t = glGetUniformLocation(1, ("translations[" + std::to_string(i) + "]").c_str());
+	//	glUniform3fv(t, 1, glm::value_ptr(Render::translations.at(i)));
+	//	t = glGetUniformLocation(1, ("rotations[" + std::to_string(i) + "]").c_str());
+	//	glUniform3fv(t, 1, glm::value_ptr(Render::rotations.at(i)));
+	//	t = glGetUniformLocation(1, ("scalations[" + std::to_string(i) + "]").c_str());
+	//	glUniform3fv(t, 1, glm::value_ptr(Render::scalations.at(i)));
+	//	t = glGetUniformLocation(1, ("color[" + std::to_string(i) + "]").c_str());
+	//	glUniform3fv(t, 1, glm::value_ptr(Render::color.at(i)));
+	//}
+	//glm::vec2 tr[100000];
+	//for (int i = 0; i < Render::translations.size(); i++) {
+	//	tr[i] = Render::translations[i];
+	//}
+	glBindBuffer(GL_ARRAY_BUFFER, Render::instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * Render::translations.size(), &Render::translations[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribDivisor(3, 1);
+
+	
+	//std::cout << "Size: " << Render::translations.size() << "\n";
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 36, Render::translations.size());
 }
 
 void Render::activateSkybox() {
