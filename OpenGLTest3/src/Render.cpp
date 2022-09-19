@@ -179,7 +179,7 @@ void Render::rend() {
 
 	
 
-	glBindTexture(GL_TEXTURE_2D, 1);
+	glBindTexture(GL_TEXTURE_2D, 6);
 	glBindBuffer(GL_ARRAY_BUFFER, Render::VBO);
 	glBufferData(GL_ARRAY_BUFFER, Render::verticesSize, Render::vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);

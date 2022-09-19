@@ -120,6 +120,16 @@ int main() {
 	unsigned int texture4 = Shaders::loadTexture("../OpenGLTest3/res/textures/skybox2.png");
 
 	
+	glBindTexture(GL_TEXTURE_2D, texture3);
+	unsigned int* pixels = new unsigned int[128 * 128 * 4];
+	glGetTexImage(GL_TEXTURE_2D,0, GL_RGBA, GL_UNSIGNED_INT, pixels);
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_INT, pixels);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	std::cout << "Loc: " << texture << "\n";
 
 
 	Shaders::ShaderProgramSource source = Shaders::ParseShader("../OpenGLTest3/res/shaders/Shader.shader");
