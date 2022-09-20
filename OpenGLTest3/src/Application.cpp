@@ -124,10 +124,46 @@ int main() {
 	unsigned int* pixels = new unsigned int[128 * 128 * 4];
 	glGetTexImage(GL_TEXTURE_2D,0, GL_RGBA, GL_UNSIGNED_INT, pixels);
 
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	unsigned int* pixels2 = new unsigned int[136 * 70 * 4];
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT, pixels2);
+
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	unsigned int* pixels3 = new unsigned int[136 * 70 * 4];
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT, pixels3);
+
+	unsigned int* atlas = new unsigned int[136 * (128 + 70) * 4];
+	for (int i = 0; i < 135 * (128 + 70) * 4; i++) {
+		atlas[i] = 0;
+	}
+	//outer loop
+	int atlasCounter = 0;
+	int textureCounter = 0;
+	for (int i = 0; i < 136; i++) {
+		for (int i = 0; i < 70 * 4; i++) {
+			atlas[atlasCounter] = pixels2[textureCounter];
+			atlasCounter++; textureCounter++;
+		}
+	}
+	int jump = 136 * 70 * 4;
+	atlasCounter = 0;
+	textureCounter = 0;
+	for (int i = 0; i < 128; i++) {
+		for (int j = 0; j < 128*4; j++) {
+			atlas[atlasCounter + jump] = pixels[textureCounter];
+			atlasCounter++; textureCounter++;
+		}
+		for (int j = 0; j < (136 - 128)*4; j++) {
+			atlas[atlasCounter+jump] = 0;
+			atlasCounter++;
+		}
+	}
+
+
 	unsigned int texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_INT, pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 136, 128+70, 0, GL_RGBA, GL_UNSIGNED_INT, atlas);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	std::cout << "Loc: " << texture << "\n";
 
