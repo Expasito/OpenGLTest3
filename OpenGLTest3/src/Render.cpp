@@ -164,9 +164,7 @@ void Render::draw(Entity* e) {
 		//get position data to shader
 
 		
-		//glUniform3fv(Render::getUniformLoc("translateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->translate));
-		//glUniform3fv(Render::getUniformLoc("rotateData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->rotate));
-		//glUniform3fv(Render::getUniformLoc("scaleData"), 1, glm::value_ptr(e->getComponent<TransformComponent>()->scale));
+		
 		Render::translations.push_back(e->getComponent<TransformComponent>()->translate);
 		Render::rotations.push_back(e->getComponent<TransformComponent>()->rotate);
 		Render::scalations.push_back(e->getComponent<TransformComponent>()->scale);
@@ -189,25 +187,7 @@ void Render::rend() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//get instancing uniorm array data to shader
-	//for (int i = 0; i < Render::translations.size(); i++) {
-	//	//std::cout << Render::translations.at(i).x << Render::translations.at(i).y << Render::translations.at(i).z << "\n";
-	//	//std::cout << Render::rotations.at(i).x << Render::rotations.at(i).y << Render::rotations.at(i).z << "\n";
-	//	//std::cout << Render::scalations.at(i).x << Render::scalations.at(i).y << Render::scalations.at(i).z << "\n";
-	//	//std::cout << Render::color.at(i).x << Render::color.at(i).y << Render::color.at(i).z << "\n";
-	//	
-	//	t = glGetUniformLocation(1, ("translations[" + std::to_string(i) + "]").c_str());
-	//	glUniform3fv(t, 1, glm::value_ptr(Render::translations.at(i)));
-	//	t = glGetUniformLocation(1, ("rotations[" + std::to_string(i) + "]").c_str());
-	//	glUniform3fv(t, 1, glm::value_ptr(Render::rotations.at(i)));
-	//	t = glGetUniformLocation(1, ("scalations[" + std::to_string(i) + "]").c_str());
-	//	glUniform3fv(t, 1, glm::value_ptr(Render::scalations.at(i)));
-	//	t = glGetUniformLocation(1, ("color[" + std::to_string(i) + "]").c_str());
-	//	glUniform3fv(t, 1, glm::value_ptr(Render::color.at(i)));
-	//}
-	//glm::vec2 tr[100000];
-	//for (int i = 0; i < Render::translations.size(); i++) {
-	//	tr[i] = Render::translations[i];
-	//}
+
 	glBindBuffer(GL_ARRAY_BUFFER, Render::instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * Render::translations.size(), &Render::translations[0], GL_STATIC_DRAW);
 	glEnableVertexAttribArray(3);
