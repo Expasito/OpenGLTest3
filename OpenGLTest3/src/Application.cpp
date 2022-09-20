@@ -113,57 +113,56 @@ int main() {
 
 
 	//load textures begins here
-	unsigned int texture0 = Shaders::loadTexture("../OpenGLTest3/res/textures/Default.png");
-	unsigned int texture1 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
-	unsigned int texture2 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture2.png");
-	unsigned int texture3 = Shaders::loadTexture("../OpenGLTest3/res/textures/Deor.png");
-	unsigned int texture4 = Shaders::loadTexture("../OpenGLTest3/res/textures/skybox2.png");
+	Shaders::TextData texture0 = Shaders::loadTexture("../OpenGLTest3/res/textures/Default.png");
+	Shaders::TextData texture1 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
+	Shaders::TextData texture2 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture2.png");
+	Shaders::TextData texture3 = Shaders::loadTexture("../OpenGLTest3/res/textures/Deor.png");
+	Shaders::TextData texture4 = Shaders::loadTexture("../OpenGLTest3/res/textures/skybox2.png");
 
-	
-	glBindTexture(GL_TEXTURE_2D, texture3);
-	unsigned int* pixels = new unsigned int[128 * 128 * 4];
-	glGetTexImage(GL_TEXTURE_2D,0, GL_RGBA, GL_UNSIGNED_INT, pixels);
+	std::vector<Shaders::TextData*> vec = { &texture0,&texture1,&texture2,&texture3};
 
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	unsigned int* pixels2 = new unsigned int[136 * 70 * 4];
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT, pixels2);
+	int max = 0;
+	int height = 0;
+	for (Shaders::TextData* v : vec) {
+		if (v->width > max) {
+			max = v->width;
+		}
+		height += v->height;
+	}
+	std::cout << max << " " << height << "\n";
+	unsigned int* atlas = new unsigned int[max * height * 4];
 
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	unsigned int* pixels3 = new unsigned int[136 * 70 * 4];
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT, pixels3);
-
-	unsigned int* atlas = new unsigned int[136 * (128 + 70) * 4];
-	for (int i = 0; i < 135 * (128 + 70) * 4; i++) {
+	for (int i = 0; i < max*height * 4; i++) {
 		atlas[i] = 0;
 	}
 	//outer loop
 	int atlasCounter = 0;
 	int textureCounter = 0;
-	for (int i = 0; i < 136; i++) {
-		for (int i = 0; i < 70 * 4; i++) {
-			atlas[atlasCounter] = pixels2[textureCounter];
-			atlasCounter++; textureCounter++;
+	for (Shaders::TextData* v : vec) {
+		for (int i = 0; i < v->height; i++) {
+			for (int j = 0; j < v-> width * 4; j++) {
+				atlas[atlasCounter] = v->pixels[textureCounter];
+				atlasCounter++; textureCounter++;
+			}
+			for (int j = 0; j < (max - v->width) * 4; j++) {
+				atlas[atlasCounter] = 0;
+				atlasCounter++;
+
+			}
 		}
-	}
-	int jump = 136 * 70 * 4;
-	atlasCounter = 0;
-	textureCounter = 0;
-	for (int i = 0; i < 128; i++) {
-		for (int j = 0; j < 128*4; j++) {
-			atlas[atlasCounter + jump] = pixels[textureCounter];
-			atlasCounter++; textureCounter++;
-		}
-		for (int j = 0; j < (136 - 128)*4; j++) {
-			atlas[atlasCounter+jump] = 0;
-			atlasCounter++;
-		}
+		v->u1 = 0; v->u2 = v->width / (float)max;
+		v->v1 = 1-((float)atlasCounter / 4 / (float)max)/height;
+		v->v2 = 1-(((float)atlasCounter / 4 / (float)max) - v->height)/height;
+		std::cout << "Width: " << v->width << " Height: " << v->height;
+		std::cout << " V: " << v->v1 << " " << v->v2 << "\n";
+		textureCounter = 0;
 	}
 
 
 	unsigned int texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 136, 128+70, 0, GL_RGBA, GL_UNSIGNED_INT, atlas);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, max,height, 0, GL_RGBA, GL_UNSIGNED_INT, atlas);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	std::cout << "Loc: " << texture << "\n";
 
@@ -229,7 +228,10 @@ int main() {
 	};
 
 	static scene sceneData;
-	sceneData.textures = { texture0,texture1,texture2,texture3,texture4 };
+	sceneData.textures = {};
+	for (Shaders::TextData* v : vec) {
+		sceneData.textures.push_back(v->associateTexture);
+	}
 
 
 	ImGuiWindowFlags window_flags = 0;

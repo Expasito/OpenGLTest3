@@ -68,7 +68,7 @@ Shaders::CompileShaderStatus Shaders::CreateShader(const std::string& vertexShad
 }
 
 
-unsigned int Shaders::loadTexture(const char* filename) {
+Shaders::TextData Shaders::loadTexture(const char* filename) {
 	int width, height, nrChannels;
 	unsigned int texture;
 	unsigned char* data = SOIL_load_image(filename, &width, &height, &nrChannels, 0);
@@ -78,7 +78,8 @@ unsigned int Shaders::loadTexture(const char* filename) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(data);
-	return texture;
+	Shaders::TextData d(width, height, texture);
+	return d;
 }
 
 void Shaders::defineTextureInputs() {
