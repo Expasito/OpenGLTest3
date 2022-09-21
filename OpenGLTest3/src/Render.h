@@ -16,9 +16,11 @@ public:
 	static std::vector<glm::vec3> scalations;
 	static std::vector<glm::vec3> color;
 	static float* vertices;
-	static size_t verticesSize;
+	static unsigned int* indices;
+	static size_t verticesSize, indicesSize;
 	static Entity* skybox;
 	static unsigned int VBO, VAO, EBO;
+	static unsigned int IBO;
 	static unsigned int fbo, colorTexture, depthTexture;
 	static unsigned int instanceVBO, instanceVBO2, instanceVBO3, instanceVBO4;
 	static int windowWidth;

@@ -3,11 +3,13 @@
 int Render::windowHeight = 600;
 int Render::windowWidth = 800;
 float* Render::vertices = (float*)malloc(10 * sizeof(float));
+unsigned int* Render::indices = (unsigned int*)(malloc(6 * sizeof(unsigned int)));
 size_t Render::verticesSize = 10 * sizeof(float);
+size_t Render::indicesSize = 6 * sizeof(unsigned int);
 std::vector<Render::uniform> Render::uniforms = {};
 Entity* Render::skybox = nullptr;
 //std::vector<Entity> Render::entities = {};
-unsigned int Render::VAO = 0, Render::VBO = 0, Render::EBO = 0;
+unsigned int Render::VAO = 0, Render::VBO = 0, Render::EBO = 0, Render::IBO=0;
 //Framebuffer stuff
 unsigned int Render::fbo = 0, Render::colorTexture = 0, Render::depthTexture = 0;
 unsigned int Render::instanceVBO = 0, Render::instanceVBO2=0, Render::instanceVBO3 = 0, Render::instanceVBO4 = 0;
@@ -52,54 +54,58 @@ void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyCallBack, GLFWframebuffer
 }
 
 void Render::genCubeVert() {
-	Render::vertices = (float*)malloc(sizeof(float) * 5 * 36);
-	Render::verticesSize = 5*36 * sizeof(float);
+	static const int faces = 6;
+	Render::vertices = (float*)malloc(sizeof(float) * 5 * 4*faces);
+	Render::verticesSize = 5*4*faces* sizeof(float);
+	Render::indices = (unsigned int*)(malloc(6*faces * sizeof(unsigned int)));
+	Render::indicesSize = sizeof(unsigned int) * 6*faces;
+
 	float vertices[] = {
-	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f,
-	 1.0f, -1.0f, -1.0f,  1.0f, 0.0f,
-	 1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
-	 1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
-	-1.0f,  1.0f, -1.0f,  0.0f, 1.0f,
-	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f,
+	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
+	 1.0f, -1.0f, -1.0f,  1.0f, 0.0f, // bottom right
+	 1.0f,  1.0f, -1.0f,  1.0f, 1.0f, // top right
+	-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
 
-	-1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
-	 1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
-	 1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-	 1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
-	-1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
-	-1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
+	-1.0f, -1.0f, 1.0f,   0.0f, 0.0f, //bottom left
+	 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
+	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
+	-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
 
-	-1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-	-1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
-	-1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
-	-1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
-	-1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
-	-1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+	1.0f, -1.0f, -1.0f,   0.0f, 0.0f, //bottom left
+	 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
+	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
+	1.0f,  1.0f, -1.0f,   0.0f, 1.0f, //top left
 
-	 1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-	 1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
-	 1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
-	 1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
-	 1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
-	 1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
+	-1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
+	 -1.0f,  1.0f, 1.0f,  1.0f, 1.0f, // top right
+	-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
 
-	-1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
-	 1.0f, -1.0f, -1.0f,  1.0f, 1.0f,
-	 1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
-	 1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
-	-1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
-	-1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
+	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
+	1.0f, -1.0f, -1.0f,   1.0f, 0.0f, // bottom right
+	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, // top right
+	-1.0f,  -1.0f, 1.0f,  0.0f, 1.0f, //top left
 
-	-1.0f,  1.0f, -1.0f,  0.0f, 1.0f,
-	 1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
-	 1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-	 1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
-	-1.0f,  1.0f,  1.0f,  0.0f, 0.0f,
-	-1.0f,  1.0f, -1.0f,  0.0f, 1.0f
+	-1.0f, 1.0f, -1.0f,   0.0f, 0.0f, //bottom left
+	1.0f, 1.0f, -1.0f,    1.0f, 0.0f, // bottom right
+	 1.0f, 1.0f, 1.0f,    1.0f, 1.0f, // top right
+	-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
 	};
+
+	unsigned int indices[] = {
+		0,1,2,2,3,0
+	};
+
+	for (int i = 0; i < faces; i++) {
+		for (int j = 0; j < 6; j++) {
+			Render::indices[j+(6*i)] = indices[j] + (i * 4);
+		}
+	}
+
+
 	const float textureDx = .01;
 	//modify texture cords by moving +- .01
-	for (int i = 3; i <5*36; i += 5) {
+	for (int i = 3; i <5*4*faces; i += 5) {
 		if (vertices[i] == 1.0f)
 			vertices[i] -= textureDx;
 		if (vertices[i + 1] == 1.0f)
@@ -129,6 +135,7 @@ void Render::initEntities() {
 	glGenBuffers(1, &Render::instanceVBO2);
 	glGenBuffers(1, &Render::instanceVBO3);
 	glGenBuffers(1, &Render::instanceVBO4);
+	glGenBuffers(1, &Render::IBO);
 	
 }
 
@@ -183,6 +190,9 @@ void Render::rend() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Render::IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*6*6, Render::indices, GL_STATIC_DRAW);
+
 	//get texture data to shader
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
@@ -212,7 +222,9 @@ void Render::rend() {
 	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glVertexAttribDivisor(6, 1);
 
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 36, Render::translations.size());
+	//glDrawElementsInstanced(GL_TRIANGLES, 0, 36, Render::translations.size());
+	//glDrawElementsInstanced(GL_TRIANGLES, 6,GL_UNSIGNED_INT,Render::indices,Render::translations.size());
+	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0,Render::translations.size());
 }
 
 void Render::activateSkybox() {
