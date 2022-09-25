@@ -12,19 +12,21 @@ Entity* Render::skybox = nullptr;
 unsigned int Render::VAO = 0, Render::VBO = 0, Render::EBO = 0, Render::IBO=0;
 //Framebuffer stuff
 unsigned int Render::fbo = 0, Render::colorTexture = 0, Render::depthTexture = 0;
-unsigned int Render::instanceVBO = 0, Render::instanceVBO2=0, Render::instanceVBO3 = 0, Render::instanceVBO4 = 0;
+unsigned int Render::instanceVBO = 0, Render::instanceVBO2=0, Render::instanceVBO3 = 0, Render::instanceVBO4 = 0, Render::instanceVBO5=0;
 std::vector<glm::vec3> Render::translations = {};
 std::vector<glm::vec3> Render::rotations = {};
 std::vector<glm::vec3> Render::scalations = {};
 std::vector<glm::vec3> Render::color = {};
+std::vector<float> Render::texture = {};
 
 GLFWwindow* Render::init() {
 	//Basic glfw init methods
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_MAXIMIZED,GLFW_TRUE);
+
 
 	//create window pointer
 	GLFWwindow* wind = glfwCreateWindow(windowWidth, windowHeight, "Opengl window", nullptr, nullptr);
@@ -135,6 +137,7 @@ void Render::initEntities() {
 	glGenBuffers(1, &Render::instanceVBO2);
 	glGenBuffers(1, &Render::instanceVBO3);
 	glGenBuffers(1, &Render::instanceVBO4);
+	glGenBuffers(1, &Render::instanceVBO5);
 	glGenBuffers(1, &Render::IBO);
 	
 }
@@ -150,41 +153,31 @@ unsigned int Render::getUniformLoc(std::string name) {
 
 void Render::draw(Entity* e) {
 	//Tell GPU how to read Cube data
-	
-	if (e->hasComponent<TextureComponent>()) {
-		glBindTexture(GL_TEXTURE_2D, e->getComponent<TextureComponent>()->texture);
-	}
-	else {
-		glBindTexture(GL_TEXTURE_2D, 1);
-	}
-	
 	if (e->hasComponent<TransformComponent>()) {
 		if (e->hasComponent<ColorComponent>()) {
 			Render::color.push_back(e->getComponent<ColorComponent>()->color);
-			//glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(e->getComponent<ColorComponent>()->color));
 		}
 		else {
 			Render::color.push_back(glm::vec3(1, 1, 1));
-			//glUniform3fv(Render::getUniformLoc("color"), 1, glm::value_ptr(glm::vec3(1,1,1)));
-
 		}
-		//get position data to shader
-
-		
-		
+		if (e->hasComponent<TextureComponent>()) {
+			Render::texture.push_back(e->getComponent<TextureComponent>()->texture);
+		}
+		else {
+			Render::texture.push_back(0);
+		}
+		//Render::texture.push_back(e->getComponent<TextureComponent>()->texture);
 		Render::translations.push_back(e->getComponent<TransformComponent>()->translate);
 		Render::rotations.push_back(e->getComponent<TransformComponent>()->rotate);
 		Render::scalations.push_back(e->getComponent<TransformComponent>()->scale);
-
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 }
 
 void Render::rend() {
 
 	
-
-	glBindTexture(GL_TEXTURE_2D, 6);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, Render::VBO);
 	glBufferData(GL_ARRAY_BUFFER, Render::verticesSize, Render::vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -222,9 +215,29 @@ void Render::rend() {
 	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glVertexAttribDivisor(6, 1);
 
-	//glDrawElementsInstanced(GL_TRIANGLES, 0, 36, Render::translations.size());
-	//glDrawElementsInstanced(GL_TRIANGLES, 6,GL_UNSIGNED_INT,Render::indices,Render::translations.size());
+	glBindBuffer(GL_ARRAY_BUFFER, Render::instanceVBO5);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * Render::translations.size(), &Render::texture[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(7);
+	glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, 1 * sizeof(float), (void*)0);
+	glVertexAttribDivisor(7, 1);
+	
+	glBindTextureUnit(0, 0);
+	glBindTextureUnit(1, 1);
+	glBindTextureUnit(2, 2);
+	glBindTextureUnit(3, 3);
+	glBindTextureUnit(4, 4);
+	glBindTextureUnit(5, 5);
+
+
+
 	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0,Render::translations.size());
+
+	//clear data for each draw
+	Render::translations = {};
+	Render::rotations = {};
+	Render::scalations = {};
+	Render::color = {};
+	Render::texture = {};
 }
 
 void Render::activateSkybox() {

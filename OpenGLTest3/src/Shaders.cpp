@@ -68,18 +68,48 @@ Shaders::CompileShaderStatus Shaders::CreateShader(const std::string& vertexShad
 }
 
 
-Shaders::TextData Shaders::loadTexture(const char* filename) {
+unsigned int Shaders::loadTexture(const char* filename) {
+	//int width, height, nrChannels;
+	//unsigned int texture = 0;
+	//unsigned char* data = SOIL_load_image(filename, &width, &height, &nrChannels, 0);
+	////
+	//glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	//glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//
+	//glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	////glTextureStorage2D(texture, 1, GL_RGB, width, height);
+	//glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+	////glGenerateMipmap(GL_TEXTURE_2D);
+	//glGenerateTextureMipmap(texture);
+	//glBindTextureUnit(Shaders::counter, texture);
+	//std::cout << "Counter: " << Shaders::counter << " Name: " << texture << "\n";
+	//Shaders::counter++;
+	//stbi_image_free(data);
 	int width, height, nrChannels;
-	unsigned int texture;
+	unsigned int texture = 0;
 	unsigned char* data = SOIL_load_image(filename, &width, &height, &nrChannels, 0);
-	
+	//
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	//glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	//glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//
+	//glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	////glTextureStorage2D(texture, 1, GL_RGB, width, height);
+	//glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+	
+	std::cout << "Counter: " << Shaders::counter << " Name: " << texture << "\n";
+	Shaders::counter++;
 	stbi_image_free(data);
-	Shaders::TextData d(width, height, texture);
-	return d;
+	return texture;
 }
 
 void Shaders::defineTextureInputs() {

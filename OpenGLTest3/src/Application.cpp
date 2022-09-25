@@ -113,60 +113,14 @@ int main() {
 
 
 	//load textures begins here
-	Shaders::TextData texture0 = Shaders::loadTexture("../OpenGLTest3/res/textures/Default.png");
-	Shaders::TextData texture1 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
-	Shaders::TextData texture2 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture2.png");
-	Shaders::TextData texture3 = Shaders::loadTexture("../OpenGLTest3/res/textures/Deor.png");
-	Shaders::TextData texture4 = Shaders::loadTexture("../OpenGLTest3/res/textures/skybox2.png");
+	unsigned int texture0 = Shaders::loadTexture("../OpenGLTest3/res/textures/Default.png");
+	unsigned int texture1 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture1.png");
+	unsigned int texture2 = Shaders::loadTexture("../OpenGLTest3/res/textures/Texture2.png");
+	unsigned int texture3 = Shaders::loadTexture("../OpenGLTest3/res/textures/Deor.png");
+	unsigned int texture4 = Shaders::loadTexture("../OpenGLTest3/res/textures/skybox2.png");
 
-	std::vector<Shaders::TextData*> vec = { &texture0,&texture1,&texture2,&texture3};
-
-	int max = 0;
-	int height = 0;
-	for (Shaders::TextData* v : vec) {
-		if (v->width > max) {
-			max = v->width;
-		}
-		height += v->height;
-	}
-	std::cout << max << " " << height << "\n";
-	unsigned int* atlas = new unsigned int[max * height * 4];
-
-	for (int i = 0; i < max*height * 4; i++) {
-		atlas[i] = 0;
-	}
-	//outer loop
-	int atlasCounter = 0;
-	int textureCounter = 0;
-	for (Shaders::TextData* v : vec) {
-		for (int i = 0; i < v->height; i++) {
-			for (int j = 0; j < v-> width * 4; j++) {
-				atlas[atlasCounter] = v->pixels[textureCounter];
-				atlasCounter++; textureCounter++;
-			}
-			for (int j = 0; j < (max - v->width) * 4; j++) {
-				atlas[atlasCounter] = 0;
-				atlasCounter++;
-
-			}
-		}
-		v->u1 = 0; v->u2 = v->width / (float)max;
-		v->v1 = 1-((float)atlasCounter / 4 / (float)max)/height;
-		v->v2 = 1-(((float)atlasCounter / 4 / (float)max) - v->height)/height;
-		std::cout << "Width: " << v->width << " Height: " << v->height;
-		std::cout << " V: " << v->v1 << " " << v->v2 << "\n";
-		textureCounter = 0;
-	}
-
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, max,height, 0, GL_RGBA, GL_UNSIGNED_INT, atlas);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	std::cout << "Loc: " << texture << "\n";
-
-
+	
+	
 	Shaders::ShaderProgramSource source = Shaders::ParseShader("../OpenGLTest3/res/shaders/Shader.shader");
 	Shaders::CompileShaderStatus shaderRet = Shaders::CreateShader(source.VertexSource, source.FragmentSource);
 	//Exit program if shader error
@@ -176,7 +130,6 @@ int main() {
 	}
 
 	unsigned int shader = shaderRet.id;
-	std::cout << "shader " << shader << "\n";
 	glUseProgram(shader);
 
 
@@ -201,16 +154,15 @@ int main() {
 	Render::uniforms.push_back({viewLoc, "view"});
 	Render::uniforms.push_back({projectionLoc, "projection"});
 
-	//unsigned int colorLoc = glGetUniformLocation(shader, "color");
-	//unsigned int translationsLoc = glGetUniformLocation(shader, "translations");
-	//unsigned int rotationsLoc = glGetUniformLocation(shader, "rotations");
-	//unsigned int scalationsLoc = glGetUniformLocation(shader, "scalations");
-	//Render::uniforms.push_back({ colorLoc,"color" });
-	//Render::uniforms.push_back({ translationsLoc,"translations" });
-	//Render::uniforms.push_back({ rotationsLoc,"rotations" });
-	//Render::uniforms.push_back({ scalationsLoc,"scalations" });
 
-
+	auto t = glGetUniformLocation(shader, "u_Textures");
+	std::cout << "T loc" << t << "\n";
+	int samplers[32];
+	for (int i = 0; i < 32; i++) {
+		samplers[i] = i;
+	}
+	glUniform1iv(t,32, samplers);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 	float timer = 0;
 	
 
@@ -228,11 +180,7 @@ int main() {
 	};
 
 	static scene sceneData;
-	sceneData.textures = {};
-	for (Shaders::TextData* v : vec) {
-		sceneData.textures.push_back(v->associateTexture);
-	}
-
+	sceneData.textures = { texture0,texture1,texture2,texture3,texture4 };
 
 	ImGuiWindowFlags window_flags = 0;
 
@@ -474,10 +422,7 @@ int main() {
 
 		Render::rend();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		Render::translations = {};
-		Render::rotations = {};
-		Render::scalations = {};
-		Render::color = {};
+		
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

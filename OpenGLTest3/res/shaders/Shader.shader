@@ -7,6 +7,7 @@ layout(location = 3) in vec3 translation;
 layout(location = 4) in vec3 rotation;
 layout(location = 5) in vec3 scalation;
 layout(location = 6) in vec3 color;
+layout(location = 7) in float TextureLocation;
 
 mat4 scale(float x, float y, float z) {
     return mat4(
@@ -54,19 +55,12 @@ out vec2 TexCord;
 
 
 
-//uniform vec3 translateData;
-//uniform vec3 rotateData;
-//uniform vec3 scaleData;
-//uniform vec3 translations[500];
-//uniform vec3 rotations[500];
-//uniform vec3 scalations[500];
-//uniform vec3 color[500];
-
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-//uniform vec3 color;
 
+//uniform vec3 color;
+out float textLoc;
 out vec3 col;
 
 void main(){
@@ -83,6 +77,7 @@ void main(){
     //vec4 localPos = vec4(position.xyz, 1);
     gl_Position = projection * view * model * localPos;
     col = color;
+    textLoc = TextureLocation;
 	TexCord = vec2(textCords.x,textCords.y*1);
 };
 
@@ -93,8 +88,16 @@ void main(){
 out vec4 FragColor;
 in vec2 TexCord;
 in vec3 col;
-uniform sampler2D Texture;
+in float textLoc;
+uniform sampler2D u_Textures[32];
+
 
 void main(){
-    FragColor = texture(Texture, TexCord)*vec4(col,1);
+    int lo = int(textLoc+.02);
+    if (lo == 0) {
+        FragColor = vec4(col, 1);
+    }
+    else {
+        FragColor = texture(u_Textures[lo], TexCord)*vec4(col,1);
+    }
 };

@@ -15,6 +15,7 @@ public:
 	static std::vector<glm::vec3> rotations;
 	static std::vector<glm::vec3> scalations;
 	static std::vector<glm::vec3> color;
+	static std::vector<float> texture;
 	static float* vertices;
 	static unsigned int* indices;
 	static size_t verticesSize, indicesSize;
@@ -22,7 +23,7 @@ public:
 	static unsigned int VBO, VAO, EBO;
 	static unsigned int IBO;
 	static unsigned int fbo, colorTexture, depthTexture;
-	static unsigned int instanceVBO, instanceVBO2, instanceVBO3, instanceVBO4;
+	static unsigned int instanceVBO, instanceVBO2, instanceVBO3, instanceVBO4, instanceVBO5;
 	static int windowWidth;
 	static int windowHeight;
 	static GLFWwindow* init();
