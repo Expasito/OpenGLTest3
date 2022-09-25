@@ -304,18 +304,9 @@ int main() {
 				if (et->hasComponent<TransformComponent>()) {
 					if (ImGui::TreeNode(std::string("Transform").c_str()))
 					{
-						ImGui::Text("Translate");
-						ImGui::DragFloat("X", &(et->getComponent<TransformComponent>()->translate.x), -0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::DragFloat("Y", &(et->getComponent<TransformComponent>()->translate.y), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::DragFloat("Z", &(et->getComponent<TransformComponent>()->translate.z), -0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::Text("Rotate");
-						ImGui::DragFloat("X ", &(et->getComponent<TransformComponent>()->rotate.x), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::DragFloat("Y ", &(et->getComponent<TransformComponent>()->rotate.y), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::DragFloat("Z ", &(et->getComponent<TransformComponent>()->rotate.z), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::Text("Scale");
-						ImGui::DragFloat("X  ", &(et->getComponent<TransformComponent>()->scale.x), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::DragFloat("Y  ", &(et->getComponent<TransformComponent>()->scale.y), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
-						ImGui::DragFloat("Z  ", &(et->getComponent<TransformComponent>()->scale.z), 0.01f, -FLT_MAX, +FLT_MAX, "%.3f", flags);
+						ImGui::DragFloat3("Position", glm::value_ptr(et->getComponent<TransformComponent>()->translate), -.1f);
+						ImGui::DragFloat3("Rotation", glm::value_ptr(et->getComponent<TransformComponent>()->rotate), .01f);
+						ImGui::DragFloat3("Scale", glm::value_ptr(et->getComponent<TransformComponent>()->scale), .01f);
 						if (ImGui::Button("Remove Transform")) {
 							et->removeComponent<TransformComponent>();
 						}
@@ -349,7 +340,7 @@ int main() {
 					{
 						glm::vec3 temp = et->getComponent<ColorComponent>()->color;
 						ImVec4 temp2 = ImVec4(temp.x,temp.y,temp.z, 1.00f);
-						ImGui::ColorEdit3("clear color", (float*)&temp2);
+						ImGui::ColorEdit3("Color", (float*)&temp2);
 						temp.x = temp2.x;
 						temp.y = temp2.y;
 						temp.z = temp2.z;
