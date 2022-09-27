@@ -62,36 +62,70 @@ void Render::genCubeVert() {
 	Render::indices = (unsigned int*)(malloc(6*faces * sizeof(unsigned int)));
 	Render::indicesSize = sizeof(unsigned int) * 6*faces;
 
+	//float vertices[] = {
+	//-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
+	// 1.0f, -1.0f, -1.0f,  1.0f, 0.0f, // bottom right
+	// 1.0f,  1.0f, -1.0f,  1.0f, 1.0f, // top right
+	//-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
+	//
+	//-1.0f, -1.0f, 1.0f,   0.0f, 0.0f, //bottom left
+	// 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
+	// 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
+	//-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
+	//
+	//1.0f, -1.0f, -1.0f,   0.0f, 0.0f, //bottom left
+	// 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
+	// 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
+	//1.0f,  1.0f, -1.0f,   0.0f, 1.0f, //top left
+	//
+	//-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
+	//-1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
+	// -1.0f,  1.0f, 1.0f,  1.0f, 1.0f, // top right
+	//-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
+	//
+	//-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
+	//1.0f, -1.0f, -1.0f,   1.0f, 0.0f, // bottom right
+	// 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, // top right
+	//-1.0f,  -1.0f, 1.0f,  0.0f, 1.0f, //top left
+	//
+	//-1.0f, 1.0f, -1.0f,   0.0f, 0.0f, //bottom left
+	//1.0f, 1.0f, -1.0f,    1.0f, 0.0f, // bottom right
+	// 1.0f, 1.0f, 1.0f,    1.0f, 1.0f, // top right
+	//-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
+	//};
+
 	float vertices[] = {
-	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
-	 1.0f, -1.0f, -1.0f,  1.0f, 0.0f, // bottom right
-	 1.0f,  1.0f, -1.0f,  1.0f, 1.0f, // top right
-	-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
-
-	-1.0f, -1.0f, 1.0f,   0.0f, 0.0f, //bottom left
-	 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
-	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
-	-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
-
-	1.0f, -1.0f, -1.0f,   0.0f, 0.0f, //bottom left
-	 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
-	 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
-	1.0f,  1.0f, -1.0f,   0.0f, 1.0f, //top left
-
-	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
-	-1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
-	 -1.0f,  1.0f, 1.0f,  1.0f, 1.0f, // top right
-	-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
-
-	-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
-	1.0f, -1.0f, -1.0f,   1.0f, 0.0f, // bottom right
-	 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, // top right
-	-1.0f,  -1.0f, 1.0f,  0.0f, 1.0f, //top left
-
-	-1.0f, 1.0f, -1.0f,   0.0f, 0.0f, //bottom left
-	1.0f, 1.0f, -1.0f,    1.0f, 0.0f, // bottom right
-	 1.0f, 1.0f, 1.0f,    1.0f, 1.0f, // top right
-	-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
+	// back
+	1.0f, -1.0f, -1.0f,  0.0f, 1.0/3.0, //bottom left
+	 -1.0f, -1.0f, -1.0f,  .25f, 01.0/3.0, // bottom right
+	 -1.0f,  1.0f, -1.0f,  .25f, 2.0/3.0, // top right
+	1.0f,  1.0f, -1.0f,  0.0f, 2.0/3.0, //top left
+	
+	//front
+	-1.0f, -1.0f, 1.0f,   .5f, 1.0/3.0, //bottom left
+	 1.0f, -1.0f, 1.0f,   .75f, 1.0/3.0, // bottom right
+	 1.0f,  1.0f, 1.0f,   .75f, 2.0/3.0, // top right
+	-1.0f,  1.0f, 1.0f,   .5f, 2.0/3.0, //top left
+	//right
+	1.0f, -1.0f, 1.0f,   .75f, 1.0/3.0, //bottom left
+	 1.0f, -1.0f, -1.0f,   1.0f, 1.0/3.0, // bottom right
+	 1.0f,  1.0f, -1.0f,   1.0f, 2.0/3.0, // top right
+	1.0f,  1.0f, 1.0f,   .75f, 2.0/3.0, //top left
+	//left
+	-1.0f, -1.0f, -1.0f,  0.25f, 1.0/3.0, //bottom left
+	-1.0f, -1.0f, 1.0f,   .5f, 1.0/3.0, // bottom right
+	 -1.0f,  1.0f, 1.0f,  .5f, 2.0/3.0, // top right
+	-1.0f,  1.0f, -1.0f,  .25f, 2.0/3.0, //top left
+	//bottom
+	-1.0f, 1.0f, -1.0f,  .25f, 2.0 / 3.0, //bottom left.25f, 0.0f,
+	-1.0f, 1.0f, 1.0f,   .5f, 2.0 / 3.0, // bottom righ.5f, 0.0f, t
+	1.0f, 1.0f, 1.0f,   .5f, 1.0f, // top right  .5f, 1.0/3.0, 
+	1.0f,  1.0f, -1.0f,  .25f, 1.0f, //top left   .25f, 1.0/3.0,
+	//top
+	-1.0f, -1.0f, -1.0f,   .25f, 1.0/3.0, //bottom left
+	1.0f, -1.0f, -1.0f,    .25f, 0.0f, // bottom right
+	 1.0f, -1.0f, 1.0f,    .5f, 0.0f, // top right
+	-1.0f,  -1.0f, 1.0f,   .5f, 1.0/3.0, //top left
 	};
 
 	unsigned int indices[] = {
@@ -105,18 +139,18 @@ void Render::genCubeVert() {
 	}
 
 
-	const float textureDx = .01;
-	//modify texture cords by moving +- .01
-	for (int i = 3; i <5*4*faces; i += 5) {
-		if (vertices[i] == 1.0f)
-			vertices[i] -= textureDx;
-		if (vertices[i + 1] == 1.0f)
-			vertices[i + 1] -= textureDx;
-		if (vertices[i] == 0.0f)
-			vertices[i] += textureDx;
-		if (vertices[i + 1] == 0.0f)
-			vertices[i + 1] += textureDx;
-	}
+	//const float textureDx = .01;
+	////modify texture cords by moving +- .01
+	//for (int i = 3; i <5*4*faces; i += 5) {
+	//	if (vertices[i] == 1.0f)
+	//		vertices[i] -= textureDx;
+	//	if (vertices[i + 1] == 1.0f)
+	//		vertices[i + 1] -= textureDx;
+	//	if (vertices[i] == 0.0f)
+	//		vertices[i] += textureDx;
+	//	if (vertices[i + 1] == 0.0f)
+	//		vertices[i + 1] += textureDx;
+	//}
 	for (int i = 0; i < sizeof(vertices)/sizeof(float); i++) {
 		Render::vertices[i] = vertices[i];
 	}
@@ -243,7 +277,7 @@ void Render::rend() {
 void Render::activateSkybox() {
 	if (Render::skybox == nullptr) {
 		Render::skybox = new Entity();
-		Render::skybox->addComponent<TransformComponent>()->scale = glm::vec3(50, 50, 50);
+		Render::skybox->addComponent<TransformComponent>()->scale = glm::vec3(500, 500, 500);
 		Render::skybox->addComponent<TextureComponent>()->texture = 5;
 	}
 }
