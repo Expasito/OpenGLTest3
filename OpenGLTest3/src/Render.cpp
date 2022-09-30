@@ -60,77 +60,77 @@ void Render::callBacks(GLFWwindow* wind, GLFWkeyfun keyCallBack, GLFWframebuffer
 
 void Render::genCubeVert() {
 	static const int faces = 6;
-	Render::vertices = (float*)malloc(sizeof(float) * 3 * 4*faces);
-	Render::verticesSize = 5*4*faces* sizeof(float);
+	Render::vertices = (float*)malloc(sizeof(float) * 7 * 4*faces);
+	Render::verticesSize = 7*4*faces* sizeof(float);
 	Render::indices = (unsigned int*)(malloc(6*faces * sizeof(unsigned int)));
 	Render::indicesSize = sizeof(unsigned int) * 6*faces;
 	Render::cords = (float*)malloc(sizeof(float) * 2 * 4 * faces);
 	Render::cordsSize = sizeof(float) * 2 * 4 * faces;
 
-	//float vertices[] = {
-	//-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
-	// 1.0f, -1.0f, -1.0f,  1.0f, 0.0f, // bottom right
-	// 1.0f,  1.0f, -1.0f,  1.0f, 1.0f, // top right
-	//-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
-	//
-	//-1.0f, -1.0f, 1.0f,   0.0f, 0.0f, //bottom left
-	// 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
-	// 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
-	//-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
-	//
-	//1.0f, -1.0f, -1.0f,   0.0f, 0.0f, //bottom left
-	// 1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
-	// 1.0f,  1.0f, 1.0f,   1.0f, 1.0f, // top right
-	//1.0f,  1.0f, -1.0f,   0.0f, 1.0f, //top left
-	//
-	//-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
-	//-1.0f, -1.0f, 1.0f,   1.0f, 0.0f, // bottom right
-	// -1.0f,  1.0f, 1.0f,  1.0f, 1.0f, // top right
-	//-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, //top left
-	//
-	//-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, //bottom left
-	//1.0f, -1.0f, -1.0f,   1.0f, 0.0f, // bottom right
-	// 1.0f, -1.0f, 1.0f,   1.0f, 1.0f, // top right
-	//-1.0f,  -1.0f, 1.0f,  0.0f, 1.0f, //top left
-	//
-	//-1.0f, 1.0f, -1.0f,   0.0f, 0.0f, //bottom left
-	//1.0f, 1.0f, -1.0f,    1.0f, 0.0f, // bottom right
-	// 1.0f, 1.0f, 1.0f,    1.0f, 1.0f, // top right
-	//-1.0f,  1.0f, 1.0f,   0.0f, 1.0f, //top left
-	//};
-
 	float vertices[] = {
-	// back
-	 1.0f, -1.0f, -1.0f, //bottom left
-	-1.0f, -1.0f, -1.0f, // bottom right
-	-1.0f,  1.0f, -1.0f, // top right
-	 1.0f,  1.0f, -1.0f, //top left
-	//front
-	-1.0f, -1.0f,  1.0f, //bottom left
-	 1.0f, -1.0f,  1.0f, // bottom right
-	 1.0f,  1.0f,  1.0f, // top right
-	-1.0f,  1.0f,  1.0f, //top left
-	//right
-	 1.0f, -1.0f,  1.0f, //bottom left
-	 1.0f, -1.0f, -1.0f, // bottom right
-	 1.0f,  1.0f, -1.0f, // top right
-	 1.0f,  1.0f,  1.0f, //top left
-	//left
-	-1.0f, -1.0f, -1.0f, //bottom left
-	-1.0f, -1.0f,  1.0f, // bottom right
-	-1.0f,  1.0f,  1.0f, // top right
-	-1.0f,  1.0f, -1.0f,  //top left
-	//bottom
-	-1.0f,  1.0f, -1.0f,  //bottom left.25f, 0.0f,
-	-1.0f,  1.0f,  1.0f,  // bottom righ.5f, 0.0f, t
-	 1.0f,  1.0f,  1.0f, // top right  .5f, 1.0/3.0, 
-	 1.0f,  1.0f, -1.0f,  //top left   .25f, 1.0/3.0,
-	//top
-	-1.0f, -1.0f, -1.0f, //bottom left
-	 1.0f, -1.0f, -1.0f, // bottom right
-	 1.0f, -1.0f,  1.0f, // top right
-	-1.0f, -1.0f,  1.0f, //top left
+		 1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 0.0f, 1.0 / 3.0,//bottom left
+		-1.0f, -1.0f, -1.0f,  1.0f, 0.0f, .25f, 01.0 / 3.0,// bottom right
+		-1.0f,  1.0f, -1.0f,  1.0f, 1.0f, .25f, 2.0 / 3.0,// top right
+		 1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 2.0 / 3.0,//top left
+		//front
+		-1.0f, -1.0f,  1.0f,  0.0f, 0.0f,  .5f, 1.0 / 3.0,//bottom left
+		 1.0f, -1.0f,  1.0f,  1.0f, 0.0f,  .75f, 1.0 / 3.0,// bottom right
+		 1.0f,  1.0f,  1.0f,  1.0f, 1.0f,  .75f, 2.0 / 3.0,// top right
+		-1.0f,  1.0f,  1.0f,  0.0f, 1.0f,  .5f, 2.0 / 3.0,//top left
+		//right
+		 1.0f, -1.0f,  1.0f,  0.0f, 0.0f,  .75f, 1.0 / 3.0,//bottom left
+		 1.0f, -1.0f, -1.0f,  1.0f, 0.0f,  1.0f, 1.0 / 3.0,// bottom right
+		 1.0f,  1.0f, -1.0f,  1.0f, 1.0f,  1.0f, 2.0 / 3.0,// top right
+		 1.0f,  1.0f,  1.0f,  0.0f, 1.0f,  .75f, 2.0 / 3.0,//top left
+		//left
+		-1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 0.25f, 1.0 / 3.0,//bottom left
+		-1.0f, -1.0f,  1.0f,  1.0f, 0.0f,  .5f, 1.0 / 3.0,// bottom right
+		-1.0f,  1.0f,  1.0f,  1.0f, 1.0f, .5f, 2.0 / 3.0,// top right
+		-1.0f,  1.0f, -1.0f,  0.0f, 1.0f, .25f, 2.0 / 3.0,//top left
+		//bottom
+		-1.0f,  1.0f, -1.0f,  0.0f, 0.0f, .25f, 2.0 / 3.0,//bottom left
+		-1.0f,  1.0f,  1.0f,  1.0f, 0.0f,  .5f, 2.0 / 3.0,// bottom right
+		 1.0f,  1.0f,  1.0f,  1.0f, 1.0f,  .5f, 1.0f,// top right
+		 1.0f,  1.0f, -1.0f,  0.0f, 1.0f, .25f, 1.0f,//top left
+		//top
+		-1.0f, -1.0f, -1.0f,  0.0f, 0.0f,  .25f, 1.0 / 3.0,//bottom left
+		 1.0f, -1.0f, -1.0f,  1.0f, 0.0f,   .25f, 0.0f,// bottom right
+		 1.0f, -1.0f,  1.0f,  1.0f, 1.0f,   .5f, 0.0f,// top right
+		-1.0f, -1.0f,  1.0f,  0.0f, 1.0f,  .5f, 1.0 / 3.0,//top left
 	};
+
+	//float vertices[] = {
+	//// back
+	// 1.0f, -1.0f, -1.0f, //bottom left
+	//-1.0f, -1.0f, -1.0f, // bottom right
+	//-1.0f,  1.0f, -1.0f, // top right
+	// 1.0f,  1.0f, -1.0f, //top left
+	////front
+	//-1.0f, -1.0f,  1.0f, //bottom left
+	// 1.0f, -1.0f,  1.0f, // bottom right
+	// 1.0f,  1.0f,  1.0f, // top right
+	//-1.0f,  1.0f,  1.0f, //top left
+	////right
+	// 1.0f, -1.0f,  1.0f, //bottom left
+	// 1.0f, -1.0f, -1.0f, // bottom right
+	// 1.0f,  1.0f, -1.0f, // top right
+	// 1.0f,  1.0f,  1.0f, //top left
+	////left
+	//-1.0f, -1.0f, -1.0f, //bottom left
+	//-1.0f, -1.0f,  1.0f, // bottom right
+	//-1.0f,  1.0f,  1.0f, // top right
+	//-1.0f,  1.0f, -1.0f,  //top left
+	////bottom
+	//-1.0f,  1.0f, -1.0f,  //bottom left.25f, 0.0f,
+	//-1.0f,  1.0f,  1.0f,  // bottom righ.5f, 0.0f, t
+	// 1.0f,  1.0f,  1.0f, // top right  .5f, 1.0/3.0, 
+	// 1.0f,  1.0f, -1.0f,  //top left   .25f, 1.0/3.0,
+	////top
+	//-1.0f, -1.0f, -1.0f, //bottom left
+	// 1.0f, -1.0f, -1.0f, // bottom right
+	// 1.0f, -1.0f,  1.0f, // top right
+	//-1.0f, -1.0f,  1.0f, //top left
+	//};
 
 	float cords[] = {
 		 0.0f, 1.0 / 3.0,
@@ -257,16 +257,18 @@ void Render::rend() {
 	//glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, Render::VBO);
 	glBufferData(GL_ARRAY_BUFFER, Render::verticesSize, Render::vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Render::IBO2);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 36, Render::indices, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Render::IBO2);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 36, Render::indices, GL_STATIC_DRAW);
 
-	////for texture cords
-	glBindBuffer(GL_ARRAY_BUFFER, Render::VBO2);
-	glBufferData(GL_ARRAY_BUFFER, Render::cordsSize, Render::cords, GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	//////for texture cords
+	//glBindBuffer(GL_ARRAY_BUFFER, Render::VBO2);
+	//glBufferData(GL_ARRAY_BUFFER, Render::cordsSize, Render::cords, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float)*3));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float) * 5));
 	glEnableVertexAttribArray(2);
 	//glVertexAttribDivisor(2, 1);
 	

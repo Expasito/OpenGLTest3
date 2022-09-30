@@ -2,7 +2,8 @@
 #version 330 core
 
 layout(location = 0) in vec3 position;
-layout(location = 2) in vec2 textCords;
+layout(location = 1) in vec2 textCords;
+layout(location = 2) in vec2 skyCords;
 layout(location = 3) in vec3 translation;
 layout(location = 4) in vec3 rotation;
 layout(location = 5) in vec3 scalation;
@@ -52,7 +53,7 @@ mat4 RotateZ(float psi) {
 }
 
 out vec2 TexCord;
-
+out vec2 SkyCord;
 
 
 uniform mat4 model;
@@ -62,6 +63,7 @@ uniform mat4 projection;
 //uniform vec3 color;
 out float textLoc;
 out vec3 col;
+out float instance;
 
 void main(){
     vec3 translateData = translation;
@@ -79,6 +81,10 @@ void main(){
     col = color;
     textLoc = TextureLocation;
 	TexCord = vec2(textCords.x,textCords.y*1);
+    SkyCord = skyCords;
+    float f = float(gl_InstanceID);
+    instance = f;
+
 };
 
 
@@ -87,9 +93,11 @@ void main(){
 
 out vec4 FragColor;
 in vec2 TexCord;
+in vec2 SkyCord;
 in vec3 col;
 in float textLoc;
 uniform sampler2D u_Textures[32];
+in float instance;
 
 
 void main(){
@@ -98,6 +106,17 @@ void main(){
         FragColor = vec4(col, 1);
     }
     else {
+        FragColor = texture(u_Textures[lo], TexCord) * vec4(col, 1);
+        //FragColor = texture(u_Textures[lo], SkyCord) * vec4(col, 1);
+
+        if (instance == 0.0) {
+            FragColor = texture(u_Textures[lo], SkyCord) * vec4(col, 1);
+        }
+        //float f = float(instance);
+        //FragColor = vec4(instance, 0, 0,1);
+       /* else {
+        
         FragColor = texture(u_Textures[lo], TexCord)*vec4(col,1);
+        }*/
     }
 };
