@@ -107,16 +107,9 @@ void main(){
     }
     else {
         FragColor = texture(u_Textures[lo], TexCord) * vec4(col, 1);
-        //FragColor = texture(u_Textures[lo], SkyCord) * vec4(col, 1);
-
+        //Skybox must be first draw call item
         if (instance == 0.0) {
             FragColor = texture(u_Textures[lo], SkyCord) * vec4(col, 1);
         }
-        //float f = float(instance);
-        //FragColor = vec4(instance, 0, 0,1);
-       /* else {
-        
-        FragColor = texture(u_Textures[lo], TexCord)*vec4(col,1);
-        }*/
     }
 };

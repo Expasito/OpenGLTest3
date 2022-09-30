@@ -252,33 +252,16 @@ void Render::rend() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Render::IBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*6*6, Render::indices, GL_STATIC_DRAW);
 
-	std::cout << "Start\n";
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, Render::VBO);
 	glBufferData(GL_ARRAY_BUFFER, Render::verticesSize, Render::vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Render::IBO2);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 36, Render::indices, GL_STATIC_DRAW);
-
-	//////for texture cords
-	//glBindBuffer(GL_ARRAY_BUFFER, Render::VBO2);
-	//glBufferData(GL_ARRAY_BUFFER, Render::cordsSize, Render::cords, GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float)*3));
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(sizeof(float) * 5));
 	glEnableVertexAttribArray(2);
-	//glVertexAttribDivisor(2, 1);
-	
-	
 
-	std::cout << "end\n";
-	////get texture data to shader
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	//glEnableVertexAttribArray(2);
-	////get instancing uniorm array data to shader
 
 	glBindBuffer(GL_ARRAY_BUFFER, Render::instanceVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * Render::translations.size(), &Render::translations[0], GL_STATIC_DRAW);

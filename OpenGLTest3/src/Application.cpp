@@ -6,7 +6,13 @@
 #include "Camera.h"
 
 
+/*
+			IMPORTANT:
+			Skybox draw call must be put before all other draw calls
+			as the shader uses the skybox texture cords for the first 
+			instance.
 
+*/
 #define clearMemory glfwDestroyWindow(window); glfwTerminate();
 
 //Create Camera
