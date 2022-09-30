@@ -12,3 +12,6 @@ Long term plans for OpenGLTest3
 6. shadows
 7. raytracing
 8.
+
+
+If we really want to suffer, allow for multiple textcords in seperate vbo and passed in as uniform array. Use gl_VertexID and other things to calculate
